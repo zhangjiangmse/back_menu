@@ -74,21 +74,21 @@
                         index:'3',
                         title:"本地页面",
                         component:'@/components/HelloWorld.vue',
-                        path:'/helloWorld',
+                        path:'/pages/helloWorld',
                         type:'local'
                     },
                     {
                         index:'4',
                         title:"设置页面",
                         component:'@/components/pages/SettingInfo.vue',
-                        path:'/settingInfo',
+                        path:'/pages/settingInfo',
                         type:'local'
                     },
                     {
                         index:'5',
                         title:"403",
                         component:'@/components/pages/403.vue',
-                        path:'/403',
+                        path:'/pages/403',
                         type:'local'
                     },
                 ]

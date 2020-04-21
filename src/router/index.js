@@ -6,15 +6,15 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 const routes = [
     {
-        path:'/helloWorld',
+        path:'/pages/helloWorld',
         component:() => import('@/components/HelloWorld.vue'),
     },
     {
-        path:'/SettingInfo',
+        path:'/pages/SettingInfo',
         component:() => import('@/components/pages/SettingInfo.vue')
     },
     {
-        path:'/403',
+        path:'/pages/403',
         component:() => import('@/components/pages/403.vue')
 
     }
