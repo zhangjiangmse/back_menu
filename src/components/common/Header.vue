@@ -41,7 +41,7 @@
             </div>
             <div style="float: left">
                 <!-- 用户名下拉菜单 -->
-                <el-dropdown class="user-name" trigger="click" @command="handleCommand" style="float: left" size="mini" hide-on-click="false">
+                <el-dropdown class="user-name" trigger="click" @command="handleCommand" style="float: left" size="mini" >
                         <span class="el-dropdown-link">
                             {{username}}
                             <i class="el-icon-caret-bottom"></i>
@@ -56,7 +56,7 @@
             </div>
             <div style="float: left;margin-left: 10px">
                 <!-- 语言下拉菜单 -->
-                <el-dropdown class="user-name" trigger="click" @command="handleCommand_lang" style="float: left" size="mini" hide-on-click="false">
+                <el-dropdown class="user-name" trigger="click" @command="handleCommand_lang" style="float: left" size="mini">
                         <span class="el-dropdown-link">
                            {{currentLanguage}}
                             <i class="el-icon-caret-bottom"></i>

@@ -6,8 +6,17 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 const routes = [
     {
-        path:'/pages/helloWorld',
-        component:() => import(/* webpackChunkName: "home" */ '@/components/HelloWorld.vue'),
+        path:'/helloWorld',
+        component:() => import('@/components/HelloWorld.vue'),
+    },
+    {
+        path:'/SettingInfo',
+        component:() => import('@/components/pages/SettingInfo.vue')
+    },
+    {
+        path:'/403',
+        component:() => import('@/components/pages/403.vue')
+
     }
 ]
 

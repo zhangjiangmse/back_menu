@@ -6,20 +6,24 @@
         <el-container>
             <Aside></Aside>
             <el-main style="padding-bottom: 0px;padding-top: 0px;padding-left: 0px">
-                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable  @tab-remove="removeTab">
+
+                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable  @tab-remove="removeTab" @tab-click="clickTab">
                         <el-tab-pane
                                 v-for="(item) in editableTabs"
                                 :key="item.name"
                                 :label="item.title"
                                 :name="item.name">
-                            <keep-alive>
+
                                 <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
                                 <div v-else style="height: 600px;width:100%;">
+                                    <keep-alive >
                                      <router-view></router-view>
+                                     </keep-alive>
                                 </div>
-                            </keep-alive>
+
                         </el-tab-pane>
                     </el-tabs>
+
             </el-main>
         </el-container>
     </el-container>
@@ -38,7 +42,17 @@
                 editableTabs:this.$my_tag_list
             };
         },
-        methods: {
+        watch: {
+            'this.$route': function (to, from) {
+                // eslint-disable-next-line no-debugger
+                debugger;
+                console.log(to, from)
+                this.$store.dispatch('updateActiveTemplateId', this.$route.params.templateId)
+                // 通过更新Vuex中的store的数据，让数据发生变化 this.getTemplateById()
+                //
+            }
+        },
+       methods: {
             /**
              * 移除Tab
              * @param targetName
@@ -62,6 +76,20 @@
                 this.$my_tag_list.splice(currentIndex,1)
                 this.$set(this.$my_editableTabsValue,"active-tab",nextTargetName)
 
+            },
+            clickTab( tab){
+
+                // eslint-disable-next-line no-debugger
+                debugger
+                console.log(tab)
+                let path = ''
+                for(let i = 0;i<this.$my_tag_list.length;++i){
+                    if(this.$my_tag_list[i].title == tab.name){
+                        path = this.$my_tag_list[i].path;
+                        break;
+                    }
+                }
+                this.$router.replace(path);
             }
         }
     }

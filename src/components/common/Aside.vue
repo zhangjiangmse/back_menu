@@ -1,5 +1,5 @@
 <template>
-    <el-menu default-active="1-1" collapse-transition="true"
+    <el-menu default-active="1-1" collapse-transition
              class="el-menu-vertical-demo"
              @select="handleSelected"
              @open="handleOpen"
@@ -57,9 +57,9 @@
                         children: [
                             {
                                 index:'1-1',
-                                title:"百度搜索",
+                                title:"网易云音乐",
                                 icon:'',
-                                path:'http://www.baidu.com',
+                                path:'https://music.163.com/',
                                 type:'remote'
                             }
                         ]
@@ -74,7 +74,21 @@
                         index:'3',
                         title:"本地页面",
                         component:'@/components/HelloWorld.vue',
-                        path:'/pages/helloWorld',
+                        path:'/helloWorld',
+                        type:'local'
+                    },
+                    {
+                        index:'4',
+                        title:"设置页面",
+                        component:'@/components/pages/SettingInfo.vue',
+                        path:'/settingInfo',
+                        type:'local'
+                    },
+                    {
+                        index:'5',
+                        title:"403",
+                        component:'@/components/pages/403.vue',
+                        path:'/403',
                         type:'local'
                     },
                 ]
@@ -135,7 +149,7 @@
                 //当前tab不存在，添加新的tab页，并激活
                 let content = ''
                 if(tabNode.type == "local"){
-                    this.$router.push(tabNode.path)
+                    this.$router.replace(tabNode.path)
                 }else if(tabNode.type == "remote"){
                     content = "<object type='text/html' data='"+tabNode.path+"' width='100%' height='100%'></object>"
                 }
@@ -143,7 +157,8 @@
                     title: tabNode.title,
                     name: tabNode.title,
                     content: content,
-                    type:tabNode.type
+                    type:tabNode.type,
+                    path:tabNode.path
                 });
 
                 this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
