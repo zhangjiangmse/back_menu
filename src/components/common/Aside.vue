@@ -18,18 +18,21 @@
                                 :index="subItem.index"
                                 :key="subItem.index"
                         >
-                            <template slot="title">{{ subItem.title }}</template>
+                            <template slot="title">
+                                <i :class="subItem.icon"></i>
+                                <span slot="title">{{ subItem.title }}</span>
+                            </template>
                             <el-menu-item
                                     v-for="(threeItem,i) in subItem.children"
                                     :key="i"
                                     :index="threeItem.index"
-                            >{{ threeItem.title }}</el-menu-item>
+                            ><i :class="subItem.icon"></i><span>{{ threeItem.title }}</span></el-menu-item>
                         </el-submenu>
                         <el-menu-item
                                 v-else
                                 :index="subItem.index"
                                 :key="subItem.index"
-                        >{{ subItem.title }}</el-menu-item>
+                        ><i :class="subItem.icon"></i><span>{{ subItem.title }}</span></el-menu-item>
                     </template>
                 </el-submenu>
             </template>
@@ -57,16 +60,26 @@
                         children: [
                             {
                                 index:'1-1',
-                                title:"网易云音乐",
-                                icon:'',
-                                path:'https://music.163.com/',
-                                type:'remote'
+                                title:"ElementUI官网",
+                                icon:"el-icon-eleme",
+                                path:'https://element.eleme.cn/#/zh-CN/component/installation',
+                                type:'remote',
+                                children: [
+                                    {
+                                        index:'1-1-1',
+                                        title:"ElementUI官网",
+                                        icon:"el-icon-eleme",
+                                        path:'https://element.eleme.cn/#/zh-CN/component/installation',
+                                        type:'remote'
+                                    }
+                                ]
                             }
                         ]
                     },
                     {
                         index:'2',
                         title:"百度搜索",
+                        icon:'iconfont icon-baidu',
                         path:'http://www.baidu.com',
                         type:'remote'
                     },
@@ -82,6 +95,7 @@
                         title:"设置页面",
                         component:'@/components/pages/SettingInfo.vue',
                         path:'/pages/settingInfo',
+                        icon:'el-icon-setting',
                         type:'local'
                     },
                     {
@@ -166,12 +180,19 @@
         }
     }
 </script>
-<style>
+<style scoped>
     /**
     保证收缩时，可以平滑过渡，而非直接到达，参见官网的例子
      */
     .el-menu-vertical-demo:not(.el-menu--collapse) {
         width: 200px;
         min-height: 400px;
+    }
+    .iconfont {
+        vertical-align: middle;
+        margin-right: 5px;
+        width: 24px;
+        text-align: center;
+        font-size: 18px;
     }
 </style>

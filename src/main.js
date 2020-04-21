@@ -4,7 +4,8 @@ import router from './router';
 import ElementUI from 'element-ui';
 import i18n from "@/i18n/i18";
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
-import axios from '@/http/index'
+import '@/assets/alibabaiconfont/iconfont.css'; //阿里巴巴矢量库
+import axios from '@/http/index';
 
 
 
