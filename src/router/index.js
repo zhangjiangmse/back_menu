@@ -6,6 +6,10 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 const routes = [
     {
+        path: '/',
+        redirect: '/pages/helloWorld'
+    },
+    {
         path:'/pages/helloWorld',
         component:() => import('@/components/HelloWorld.vue'),
     },

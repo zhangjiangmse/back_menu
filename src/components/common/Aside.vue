@@ -1,5 +1,5 @@
 <template>
-    <el-menu default-active="1-1" collapse-transition
+    <el-menu :default-active="defaultActiveIndex" collapse-transition
              class="el-menu-vertical-demo"
              @select="handleSelected"
              @open="handleOpen"
@@ -48,10 +48,13 @@
 
 <script>
     import bus from './bus';
+
     export default {
+
         data() {
             return {
                 collapse: false,
+                default_active_index:'',
                 aside_list:[
                     {
                         index:'1',
@@ -108,6 +111,7 @@
                 ]
             };
         },
+
         created() {
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
@@ -115,8 +119,14 @@
                 bus.$emit('collapse-content', msg);
             });
         },
+        computed: {
+            defaultActiveIndex () {
+                return this.default_active_index;
+            }
+        },
         methods: {
             handleSelected: function (key, keyPath) {
+                this.default_active_index = key
 
                 let tabNode = {"title":'',"path":'',"type":'',"component":''}
                 for(let i = 0;i<this.aside_list.length;++i){
