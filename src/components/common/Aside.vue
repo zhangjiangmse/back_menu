@@ -63,7 +63,7 @@
                         children: [
                             {
                                 index:'1-1',
-                                title:"ElementUI官网",
+                                title:"ElementUI",
                                 icon:"el-icon-eleme",
                                 path:'https://element.eleme.cn/#/zh-CN/component/installation',
                                 type:'remote',
@@ -137,6 +137,8 @@
                                 tabNode.path = item.path
                                 tabNode.type = item.type
                                 tabNode.component = item.component || ''
+                                tabNode.key = key
+                                tabNode.keyPath = keyPath
                                 return
                             }
                         })
@@ -145,6 +147,8 @@
                         tabNode.path = this.aside_list[i].path
                         tabNode.type = this.aside_list[i].type
                         tabNode.component = this.aside_list[i].component || ''
+                        tabNode.key = key
+                        tabNode.keyPath = keyPath
                         break
                     }
                 }
@@ -182,7 +186,9 @@
                     name: tabNode.title,
                     content: content,
                     type:tabNode.type,
-                    path:tabNode.path
+                    path:tabNode.path,
+                    key:tabNode.key,
+                    keyPath:tabNode.keyPath
                 });
 
                 this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)

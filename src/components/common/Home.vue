@@ -45,6 +45,7 @@
 <script>
     import Aside from './Aside.vue'
     import Header from "@/components/common/Header";
+
     export default {
         components:{
             Aside,
@@ -136,7 +137,6 @@
            },
            // 关闭所有标签页
            closeAllTabs() {
-
                //删除所有tab标签
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中
@@ -146,7 +146,37 @@
 
            // 关闭其它标签页
            closeOtherTabs(par) {
-               this.$store.commit("closeOtherTabs", par);
+               // eslint-disable-next-line no-debugger
+               debugger
+               let currTabIndex = -1
+               this.editableTabs.forEach((item,index)=>{
+                   if(item.name == this.$store.state.curContextTabId){
+                       currTabIndex = index;
+                        return
+                   }
+               })
+               let key = this.editableTabs[currTabIndex].key;
+               let keyPath = this.editableTabs[currTabIndex].keyPath
+              // let curTab = this.editableTabs[currTabIndex]
+               console.log(currTabIndex)
+               if (par == "left") {
+                   //删除左侧tab标签
+                   this.editableTabs.splice(0,currTabIndex)
+                   //调用子组件的方法，设置默认选中
+                   this.$refs.aside.handleSelected(key,keyPath);
+               }
+               if (par == "right") {
+                   //删除右侧tab标签
+                   this.editableTabs.splice(currTabIndex,this.editableTabs.length)
+                   //调用子组件的方法，设置默认选中
+                   this.$refs.aside.handleSelected(key,keyPath);
+               }
+               if (par == "other") {
+                   //删除所有tab标签
+                   this.editableTabs.splice(0,this.editableTabs.length)
+                   //调用子组件的方法，设置默认选中
+                   this.$refs.aside.handleSelected(key,keyPath);
+               }
                this.contextMenuVisible = false;
            },
            // 关闭contextMenu

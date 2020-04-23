@@ -16,16 +16,7 @@ const store = new Vuex.Store({
         saveCurContextTabId(state, curContextTabId) {
             state.curContextTabId = curContextTabId
         },
-        // 关闭所有标签
-        closeAllTabs(state) {
-            // eslint-disable-next-line no-debugger
-            debugger
-            state.tabs = [];
 
-
-            // this.commit("switchTab", "adminIndex")
-            router.replace({path:'/'})
-        },
         // 关闭其它标签页
         closeOtherTabs(state, par) {
             let tabs = state.tabs;
