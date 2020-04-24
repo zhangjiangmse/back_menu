@@ -109,8 +109,7 @@ export default {
         },
         // 侧边栏折叠
         collapseChage() {
-            // eslint-disable-next-line no-debugger
-            debugger
+
             this.collapse = !this.collapse;
             bus.$emit('collapse', this.collapse);
         },

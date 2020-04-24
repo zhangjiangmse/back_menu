@@ -170,6 +170,7 @@
                 console.log("关闭：" + key, keyPath);
             },
             addTab(tabNode) {
+
                 //判断当前tab是否已存在，若存在，则直接激活即可
                 let is_Existed = false;
                 this.$my_tag_list.forEach(item=>{
@@ -180,6 +181,7 @@
                 })
                 if(is_Existed){
                     this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
+                    this.$router.replace(tabNode.path);
                     return
                 }
                 //当前tab不存在，添加新的tab页，并激活

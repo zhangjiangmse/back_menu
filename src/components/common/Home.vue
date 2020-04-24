@@ -60,19 +60,11 @@
         },
         mounted() {
             //使用原生js 为单个dom绑定鼠标右击事件
-            let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-            tab_top_dom[0].oncontextmenu = this.openContextMenu
+            // let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
+            // tab_top_dom[0].oncontextmenu = this.openContextMenu
 
         },
         watch: {
-            'this.$route': function (to, from) {
-                // eslint-disable-next-line no-debugger
-                debugger;
-                console.log(to, from)
-                this.$store.dispatch('updateActiveTemplateId', this.$route.params.templateId)
-                // 通过更新Vuex中的store的数据，让数据发生变化 this.getTemplateById()
-                //
-            },
             contextMenuVisible() {
                 if (this.contextMenuVisible) {
                     document.body.addEventListener("click", this.closeContextMenu);
@@ -113,9 +105,6 @@
             */
             clickTab( tab){
 
-                // eslint-disable-next-line no-debugger
-                debugger
-                console.log(tab)
                 let path = ''
                 for(let i = 0;i<this.$my_tag_list.length;++i){
                     if(this.$my_tag_list[i].title == tab.name){
@@ -129,13 +118,11 @@
             右击事件
              */
            openContextMenu(e) {
-                if(e.button == 2){  //必须判断button的类型，否则菜单栏的跳转会失效
+                //if(e.button == 2){  //此处不必判断鼠标点击类型
                    e.preventDefault(); //防止默认菜单弹出
-                }
-               // eslint-disable-next-line no-debugger
-               debugger
+                //}
                let obj = e.srcElement ? e.srcElement : e.target;
-               //console.log(e.srcElement);
+
                if (obj.id) {
                    let currentContextTabId = obj.id.split("-")[1];
                    this.contextMenuVisible = true;
@@ -155,8 +142,7 @@
 
            // 关闭其它标签页
            closeOtherTabs(par) {
-               // eslint-disable-next-line no-debugger
-               debugger
+
                let currTabIndex = -1
                this.editableTabs.forEach((item,index)=>{
                    if(item.name == this.$store.state.curContextTabId){
