@@ -129,9 +129,9 @@
             右击事件
              */
            openContextMenu(e) {
-               // if(e.button == 2){
+                if(e.button == 2){  //必须判断button的类型，否则菜单栏的跳转会失效
                    e.preventDefault(); //防止默认菜单弹出
-               // }
+                }
                // eslint-disable-next-line no-debugger
                debugger
                let obj = e.srcElement ? e.srcElement : e.target;
