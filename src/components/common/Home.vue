@@ -105,7 +105,6 @@
             */
             clickTab( tab){
 
-                // let path = ''
                 let key = ''
                 let keyPath = ''
                 for(let i = 0;i<this.editableTabs.length;++i){
@@ -116,7 +115,7 @@
                     }
                 }
                 this.$refs.aside.handleSelected(key,keyPath);
-                // this.$router.replace(path);
+
             },
             /*
             右击事件
