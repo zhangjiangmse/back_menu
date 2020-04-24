@@ -20,6 +20,10 @@ const routes = [
     {
         path:'/pages/403',
         component:() => import('@/components/pages/403.vue')
+    },
+    {
+        path:'/pages/Donate',
+        component:() => import('@/components/pages/Donate.vue')
 
     }
 ]

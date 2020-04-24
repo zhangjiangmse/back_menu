@@ -108,6 +108,14 @@
                         path:'/pages/403',
                         type:'local'
                     },
+                    {
+                        index:'6',
+                        title:"支持作者",
+                        icon:"iconfont icon-redpacket_fill",
+                        component:'@/components/pages/Donate.vue',
+                        path:'/pages/Donate',
+                        type:'local'
+                    }
                 ]
             };
         },

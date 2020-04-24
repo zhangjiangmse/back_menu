@@ -8,8 +8,7 @@
             <el-main style="padding-bottom: 0px;padding-top: 0px;padding-left: 0px">
 
                     <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable
-                             @tab-remove="removeTab" @tab-click="clickTab"  @contextmenu.prevent.native="openContextMenu($event)"
-                    >
+                             @tab-remove="removeTab" @tab-click="clickTab">
                         <el-tab-pane
                                 v-for="(item) in editableTabs"
                                 :key="item.name"
@@ -17,17 +16,15 @@
                                 :name="item.name">
 
                                 <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
-                                <div v-else style="height: 600px;width:100%;">
+                                <div v-else style="height: 600px;width:100%;" >
                                     <keep-alive >
-                                     <router-view></router-view>
+                                        <router-view></router-view>
                                      </keep-alive>
                                 </div>
-
                         </el-tab-pane>
                     </el-tabs>
                 <div v-show="contextMenuVisible">
                     <ul
-
                             :style="{left:left+'px',top:top+'px'}"
                             class="contextmenu"
                     >
@@ -61,6 +58,15 @@
                 defaultActiveIndex:{"index":''}
             };
         },
+        mounted() {
+            // eslint-disable-next-line no-debugger
+            debugger
+            //@contextmenu.prevent.native
+            let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
+            // tab_top_dom[0].addEventListener("contextmenu",function () {return true});//防止默认菜单弹出
+             tab_top_dom[0].oncontextmenu = this.openContextMenu
+            // tab_top_dom[0].addEventListener("contextmenu.prevent",this.openContextMenu);//防止默认菜单弹出
+        },
         watch: {
             'this.$route': function (to, from) {
                 // eslint-disable-next-line no-debugger
@@ -71,6 +77,8 @@
                 //
             },
             contextMenuVisible(value) {
+                // eslint-disable-next-line no-debugger
+                debugger
                 console.log(value)
                 if (this.contextMenuVisible) {
                     document.body.addEventListener("click", this.closeContextMenu);
@@ -79,7 +87,9 @@
                 }
             }
         },
+
        methods: {
+
             /**
              * 移除Tab
              * @param targetName
@@ -125,6 +135,11 @@
             右击事件
              */
            openContextMenu(e) {
+               // if(e.button == 2){
+                   e.preventDefault();
+               // }
+               // eslint-disable-next-line no-debugger
+               debugger
                let obj = e.srcElement ? e.srcElement : e.target;
                //console.log(e.srcElement);
                if (obj.id) {
