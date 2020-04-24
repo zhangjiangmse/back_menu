@@ -105,14 +105,18 @@
             */
             clickTab( tab){
 
-                let path = ''
-                for(let i = 0;i<this.$my_tag_list.length;++i){
-                    if(this.$my_tag_list[i].title == tab.name){
-                        path = this.$my_tag_list[i].path;
+                // let path = ''
+                let key = ''
+                let keyPath = ''
+                for(let i = 0;i<this.editableTabs.length;++i){
+                    if(this.editableTabs[i].title == tab.name){
+                        key = this.editableTabs[i].key;
+                        keyPath = this.editableTabs[i].keyPath;
                         break;
                     }
                 }
-                this.$router.replace(path);
+                this.$refs.aside.handleSelected(key,keyPath);
+                // this.$router.replace(path);
             },
             /*
             右击事件
