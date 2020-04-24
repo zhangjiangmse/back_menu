@@ -59,13 +59,10 @@
             };
         },
         mounted() {
-            // eslint-disable-next-line no-debugger
-            debugger
-            //@contextmenu.prevent.native
+            //使用原生js 为单个dom绑定鼠标右击事件
             let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-            // tab_top_dom[0].addEventListener("contextmenu",function () {return true});//防止默认菜单弹出
-             tab_top_dom[0].oncontextmenu = this.openContextMenu
-            // tab_top_dom[0].addEventListener("contextmenu.prevent",this.openContextMenu);//防止默认菜单弹出
+            tab_top_dom[0].oncontextmenu = this.openContextMenu
+
         },
         watch: {
             'this.$route': function (to, from) {
@@ -76,10 +73,7 @@
                 // 通过更新Vuex中的store的数据，让数据发生变化 this.getTemplateById()
                 //
             },
-            contextMenuVisible(value) {
-                // eslint-disable-next-line no-debugger
-                debugger
-                console.log(value)
+            contextMenuVisible() {
                 if (this.contextMenuVisible) {
                     document.body.addEventListener("click", this.closeContextMenu);
                 } else {
@@ -136,7 +130,7 @@
              */
            openContextMenu(e) {
                // if(e.button == 2){
-                   e.preventDefault();
+                   e.preventDefault(); //防止默认菜单弹出
                // }
                // eslint-disable-next-line no-debugger
                debugger
