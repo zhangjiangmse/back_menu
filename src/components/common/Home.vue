@@ -7,7 +7,7 @@
             <Aside ref="aside"></Aside>
             <el-main style="padding-bottom: 0px;padding-top: 0px;padding-left: 0px">
 
-                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable
+                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable @contextmenu.prevent.native="openContextMenu"
                              @tab-remove="removeTab" @tab-click="clickTab">
                         <el-tab-pane
                                 v-for="(item) in editableTabs"
@@ -104,29 +104,27 @@
              */
             removeTab(targetName) {
 
-                let currentIndex = 0;
-                let key = ''
-                let keyPath = ''
-                this.editableTabs.forEach((tab, index) => {
-                    if (tab.name === targetName) {
-                        currentIndex = index
-                        if (this.editableTabsValue['active-tab'] === targetName) {
-                            let nextTab = this.editableTabs[index + 1] || this.editableTabs[index - 1];
-                            if (nextTab) {
-                                key = nextTab.key
-                                keyPath = nextTab.keyPath
-                                return
-                            }
-                        }
-                        return;
-                    }
-                });
+               let targetIndex = -1;
+               for(let i = 0;i<this.editableTabs.length;++i){
+                   if (this.editableTabs[i].title == targetName) {
+                       // 记录移除标签的index
+                       targetIndex = i;
+                       break;
+                   }
+               }
+               let key = this.editableTabs[targetIndex].key
+               let keyPath = this.editableTabs[targetIndex].keyPath
 
-               this.$my_tag_list.splice(currentIndex,1)
-               if(key != '' && keyPath != ''){
+               //如果移除的是当前Tab页，则激活当前页的上页或下页
+               if (this.editableTabsValue['active-tab'] === targetName) {
+                   let nextTab = this.editableTabs[targetIndex + 1] || this.editableTabs[targetIndex - 1];
+                   if (nextTab) {
+                       key = nextTab.key
+                       keyPath = nextTab.keyPath
+                   }
                    this.$refs.aside.handleSelected(key,keyPath);
                }
-
+               this.editableTabs.splice(targetIndex,1)
             },
            /*
            点击当前页
@@ -210,7 +208,7 @@
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中
                this.$refs.aside.handleSelected("3",["3"]);
-               this.contextMenuVisible = false;
+               this.closeContextMenu()
            },
 
            // 关闭其它标签页
@@ -244,7 +242,7 @@
                    //调用子组件的方法，设置默认选中
                    this.$refs.aside.handleSelected(key,keyPath);
                }
-               this.contextMenuVisible = false;
+               this.closeContextMenu()
            },
            // 关闭contextMenu
            closeContextMenu() {
@@ -285,6 +283,5 @@
     }
     .contextmenu li button{
        color: #2c3e50;
-
     }
 </style>
