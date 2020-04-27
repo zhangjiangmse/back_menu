@@ -13,25 +13,22 @@
                                 v-for="(item) in editableTabs"
                                 :key="item.name"
                                 :label="item.title"
-                                :name="item.name">
-
-                                <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
-                                <div v-else style="height: 600px;width:100%;" >
-                                    <keep-alive >
-                                        <router-view></router-view>
-                                     </keep-alive>
-                                </div>
+                                :name="item.title">
+                                    <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
+                                    <div v-else style="height: 600px;width:100%;">
+                                        <keep-alive :include="keepAliveTagsList">
+                                            <router-view></router-view>
+                                        </keep-alive>
+                                    </div>
                         </el-tab-pane>
                     </el-tabs>
                 <div v-show="contextMenuVisible">
-                    <ul
-                            :style="{left:left+'px',top:top+'px'}"
-                            class="contextmenu"
-                    >
-                        <li @click="closeAllTabs">关闭所有</li>
-                        <li @click="closeOtherTabs('left')">关闭左边</li>
-                        <li @click="closeOtherTabs('right')">关闭右边</li>
-                        <li @click="closeOtherTabs('other')">关闭其他</li>
+                    <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+                        <li><el-button type="text" @click="curTabReload()" size="mini">重新加载</el-button></li>
+                        <li><el-button type="text" @click="closeAllTabs()" size="mini">关闭所有</el-button></li>
+                        <li><el-button type="text" @click="closeOtherTabs('left')" :disabled="isDisabledCloseLeftBtnFlag" size="mini">关闭左边</el-button></li>
+                        <li><el-button type="text" @click="closeOtherTabs('right')" :disabled="isDisabledCloseRightBtnFlag" size="mini">关闭右边</el-button></li>
+                        <li><el-button type="text" @click="closeOtherTabs('other')" size="mini">关闭其他</el-button></li>
                     </ul>
                 </div>
             </el-main>
@@ -48,23 +45,40 @@
             Aside,
             Header
         },
+        provide() {
+            return {
+                reload: this.reload
+            }
+        },
         data() {
             return {
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
                 contextMenuVisible:false,
+                isDisabledCloseLeftBtnFlag:true,
+                isDisabledCloseRightBtnFlag:true,
                 left:'',
                 top:'',
+                reloadKey:0,
                 defaultActiveIndex:{"index":''}
             };
         },
-        mounted() {
-            //使用原生js 为单个dom绑定鼠标右击事件
-            // let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-            // tab_top_dom[0].oncontextmenu = this.openContextMenu
+        created() {
 
         },
+        mounted() {
+            // 使用原生js 为单个dom绑定鼠标右击事件
+            let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
+            tab_top_dom[0].oncontextmenu = this.openContextMenu
+
+        },
+        computed:{
+            keepAliveTagsList(){
+                return this.$store.getters.keepAliveTagsList
+            }
+        },
         watch: {
+
             contextMenuVisible() {
                 if (this.contextMenuVisible) {
                     document.body.addEventListener("click", this.closeContextMenu);
@@ -73,31 +87,45 @@
                 }
             }
         },
-
        methods: {
+           reload() {
 
-            /**
+               //let _this = this
+               //重新将store里的tabid设为当前页面，再使用curTabReload方法
+               let currentContextTabId = this.editableTabsValue['active-tab']
+
+               this.$store.commit("saveCurContextTabId", currentContextTabId);
+               this.curTabReload()
+
+           },
+           /**
              * 移除Tab
              * @param targetName
              */
             removeTab(targetName) {
-                let nextTargetName = this.$my_editableTabsValue['active-tab'];
+
                 let currentIndex = 0;
-                this.$my_tag_list.forEach((tab, index) => {
+                let key = ''
+                let keyPath = ''
+                this.editableTabs.forEach((tab, index) => {
                     if (tab.name === targetName) {
                         currentIndex = index
-                        if (this.$my_editableTabsValue['active-tab'] === targetName) {
-                            let nextTab = this.$my_tag_list[index + 1] || this.$my_tag_list[index - 1];
+                        if (this.editableTabsValue['active-tab'] === targetName) {
+                            let nextTab = this.editableTabs[index + 1] || this.editableTabs[index - 1];
                             if (nextTab) {
-                                nextTargetName = nextTab.name;
+                                key = nextTab.key
+                                keyPath = nextTab.keyPath
                                 return
                             }
                         }
                         return;
                     }
                 });
-                this.$my_tag_list.splice(currentIndex,1)
-                this.$set(this.$my_editableTabsValue,"active-tab",nextTargetName)
+
+               this.$my_tag_list.splice(currentIndex,1)
+               if(key != '' && keyPath != ''){
+                   this.$refs.aside.handleSelected(key,keyPath);
+               }
 
             },
            /*
@@ -115,8 +143,8 @@
                     }
                 }
                 this.$refs.aside.handleSelected(key,keyPath);
-
             },
+
             /*
             右击事件
              */
@@ -128,11 +156,53 @@
 
                if (obj.id) {
                    let currentContextTabId = obj.id.split("-")[1];
+                   let curIndex = 0;
+                   for(;curIndex<this.editableTabs.length;++curIndex){
+                       if(this.editableTabs[curIndex].title == currentContextTabId){
+                           break;
+                       }
+                   }
+                   if(curIndex<=0){
+                       this.isDisabledCloseLeftBtnFlag = true
+                       this.isDisabledCloseRightBtnFlag = false
+                   }else if(curIndex >= this.editableTabs.length-1){
+                       this.isDisabledCloseLeftBtnFlag = false
+                       this.isDisabledCloseRightBtnFlag = true
+                   }else{
+                       this.isDisabledCloseLeftBtnFlag = false
+                       this.isDisabledCloseRightBtnFlag = false
+                   }
                    this.contextMenuVisible = true;
                    this.$store.commit("saveCurContextTabId", currentContextTabId);
                    this.left = e.clientX;
                    this.top = e.clientY + 10;
                }
+           },
+           /*
+           刷新当前页
+            */
+           curTabReload(){
+               let currTabIndex = 0;
+               for(;currTabIndex<this.editableTabs.length;++currTabIndex){
+                   if(this.editableTabs[currTabIndex].title == this.$store.state.curContextTabId){
+                       break;
+                   }
+               }
+               let key = this.editableTabs[currTabIndex].key;
+               let keyPath = this.editableTabs[currTabIndex].keyPath
+               console.log(key,keyPath)
+
+               let curTabName =  this.editableTabs[currTabIndex].name
+               let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
+               new_tab_list_keepAlive = new_tab_list_keepAlive.filter((item)=>{
+                   return item != curTabName
+               })
+               this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
+               this.$router.replace('/')
+
+               this.$nextTick(()=>{
+                   this.$refs.aside.handleSelected(key,keyPath);
+               })
            },
            // 关闭所有标签页
            closeAllTabs() {
@@ -145,14 +215,13 @@
 
            // 关闭其它标签页
            closeOtherTabs(par) {
-
-               let currTabIndex = -1
-               this.editableTabs.forEach((item,index)=>{
-                   if(item.name == this.$store.state.curContextTabId){
-                       currTabIndex = index;
-                        return
+               let currTabIndex = 0;
+               for(;currTabIndex<this.editableTabs.length;++currTabIndex){
+                   if(this.editableTabs[currTabIndex].title == this.$store.state.curContextTabId){
+                       break;
                    }
-               })
+               }
+
                let key = this.editableTabs[currTabIndex].key;
                let keyPath = this.editableTabs[currTabIndex].keyPath
               // let curTab = this.editableTabs[currTabIndex]
@@ -206,10 +275,16 @@
     }
     .contextmenu li {
         margin: 0;
-        padding: 7px 16px;
+        padding: 0px 22px;
+
     }
+
     .contextmenu li:hover {
         background: #f2f2f2;
         cursor: pointer;
+    }
+    .contextmenu li button{
+       color: #2c3e50;
+
     }
 </style>

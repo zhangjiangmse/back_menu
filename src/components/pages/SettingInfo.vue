@@ -23,6 +23,7 @@
 </template>
 <script>
     export default {
+        name:'SettingInfo',
         data(){
             return{
                 input:'',
@@ -37,11 +38,32 @@
         },
         methods : {
             myInitData(){
-
+                this.getCityOptions()
             },
+            getCityOptions(){
+                let _this = this
+                this.$axios.post('/area/getAreaOptionsForSDProvince', null)
+                    .then(function (response) {
+                        _this.cityOptions = response.data.result
+                    }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            /**
+             * 根据地级市code，级联查询县级市
+             */
             getCountyOptions(){
 
-            }
+                let _this = this
+                _this.optionValue_county = ''
+                let param = {"parentCode":_this.optionValue_city};
+                this.$axios.post('/area/getAreaOptionsByParentCode', param)
+                    .then(function (response) {
+                        _this.countyOptions = response.data.result
+                    }).catch(function (error) {
+                    console.log(error);
+                });
+            },
 
         }
     }

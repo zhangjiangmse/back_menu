@@ -82,6 +82,7 @@
                     {
                         index:'2',
                         title:"百度搜索",
+                        name:'baidu',
                         icon:'iconfont icon-baidu',
                         path:'http://www.baidu.com',
                         type:'remote'
@@ -89,28 +90,41 @@
                     {
                         index:'3',
                         title:"本地页面",
+                        name:'HelloWorld',
                         component:'@/components/HelloWorld.vue',
                         path:'/pages/helloWorld',
                         type:'local'
                     },
                     {
                         index:'4',
+                        title:"基础表格",
+                        name:'BaseTable',
+                        component:'@/components/pages/BaseTable.vue',
+                        path:'/pages/BaseTable',
+                        icon:'el-icon-setting',
+                        type:'local'
+                    },
+                    {
+                        index:'5',
                         title:"设置页面",
+                        name:'SettingInfo',
                         component:'@/components/pages/SettingInfo.vue',
                         path:'/pages/settingInfo',
                         icon:'el-icon-setting',
                         type:'local'
                     },
                     {
-                        index:'5',
+                        index:'6',
                         title:"403",
+                        name:'403',
                         component:'@/components/pages/403.vue',
                         path:'/pages/403',
                         type:'local'
                     },
                     {
-                        index:'6',
+                        index:'7',
                         title:"支持作者",
+                        name:'Donate',
                         icon:"iconfont icon-redpacket_fill",
                         component:'@/components/pages/Donate.vue',
                         path:'/pages/Donate',
@@ -147,6 +161,7 @@
                                 tabNode.component = item.component || ''
                                 tabNode.key = key
                                 tabNode.keyPath = keyPath
+                                tabNode.name = item.name
                                 return
                             }
                         })
@@ -157,6 +172,7 @@
                         tabNode.component = this.aside_list[i].component || ''
                         tabNode.key = key
                         tabNode.keyPath = keyPath
+                        tabNode.name =  this.aside_list[i].name
                         break
                     }
                 }
@@ -170,7 +186,9 @@
                 console.log("关闭：" + key, keyPath);
             },
             addTab(tabNode) {
-
+                let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
+                new_tab_list_keepAlive.push(tabNode.name)
+                this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
                 //判断当前tab是否已存在，若存在，则直接激活即可
                 let is_Existed = false;
                 this.$my_tag_list.forEach(item=>{
@@ -191,9 +209,10 @@
                 }else if(tabNode.type == "remote"){
                     content = "<object type='text/html' data='"+tabNode.path+"' width='100%' height='100%'></object>"
                 }
+
                 this.$my_tag_list.push({
                     title: tabNode.title,
-                    name: tabNode.title,
+                    name: tabNode.name,
                     content: content,
                     type:tabNode.type,
                     path:tabNode.path,
