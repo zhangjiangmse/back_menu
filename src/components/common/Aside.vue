@@ -123,6 +123,15 @@
                     },
                     {
                         index:'7',
+                        title:"自定义图标",
+                        name:'自定义图标',
+                        icon:'iconfont icon-smell',
+                        component:'@/components/pages/Icon.vue',
+                        path:'/pages/Icon',
+                        type:'local'
+                    },
+                    {
+                        index:'30',
                         title:"支持作者",
                         name:'Donate',
                         icon:"iconfont icon-redpacket_fill",

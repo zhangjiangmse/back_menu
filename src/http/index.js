@@ -20,9 +20,10 @@ axios.interceptors.request.use(
         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.token = `${token}`;
         }
-        if (config.url.indexOf(url) === -1) {
-            config.url = url + config.url;/*拼接完整请求路径*/
-        }
+        console.log(url)
+        // if (config.url.indexOf(url) === -1) {
+        //     config.url = url + config.url;/*拼接完整请求路径*/
+        // }
         //在发送请求之前做某件事，序列化参数->视请求头而定
         if(config.method  === 'post'){
             config.data = qs.stringify(config.data);
@@ -104,5 +105,18 @@ export function fetchGet(url, param) {
             })
     })
 }
-
-
+export function $getJson (method) {
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'get',
+            url: method,
+            dataType: "json",
+            crossDomain: true,
+            cache: false
+        }).then(res => {
+            resolve(res)
+        }).catch(error => {
+            reject(error)
+        })
+    })
+}

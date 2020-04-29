@@ -34,6 +34,11 @@ const routes = [
         name:'BaseTable',
         path:'/pages/BaseTable',
         component:() => import('@/components/pages/BaseTable.vue')
+    },
+    {
+        name:'Icon',
+        path:'/pages/Icon',
+        component:() => import('@/components/pages/Icon.vue')
     }
 
 ]

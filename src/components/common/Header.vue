@@ -10,16 +10,18 @@
         <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
             <div class="logo">后台管理系统</div>
         </el-col>
-        <el-col :xs="17" :sm="17" :md="17" :lg="17" :xl="17">
+        <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16">
             <div style="min-height: 36px;"></div>
         </el-col>
-        <el-col :xs="1" :sm="1" :md="1" :lg="1" :xl="1">
+        <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+
             <!-- 全屏显示 -->
             <div  class="btn-fullscreen" @click="handleFullScreen">
                 <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
                     <i class="el-icon-rank"></i>
                 </el-tooltip>
             </div>
+
             <!-- 消息中心 -->
             <div class="btn-bell">
                 <el-tooltip
@@ -27,10 +29,16 @@
                         :content="message?`有${message}条未读消息`:`消息中心`"
                         placement="bottom"
                 >
-                    <router-link to="/tabs">
+                    <div style="height: 50px">
                         <i class="el-icon-bell"></i>
                         <span class="btn-bell-badge" v-if="message"></span>
-                    </router-link>
+                    </div>
+                </el-tooltip>
+            </div>
+            <!-- 刷新Tab -->
+            <div  class="btn-refresh" @click="refreshTab">
+                <el-tooltip effect="dark" content="刷新" placement="bottom" >
+                     <i class="el-icon-refresh"></i>
                 </el-tooltip>
             </div>
         </el-col>
@@ -73,6 +81,7 @@
 <script>
 import bus from '../common/bus';
 export default {
+    inject: ['reload'],
     data() {
         return {
             currentLanguage:'中文',
@@ -112,6 +121,10 @@ export default {
 
             this.collapse = !this.collapse;
             bus.$emit('collapse', this.collapse);
+        },
+        //刷新Tab
+        refreshTab(){
+            this.reload()
         },
         // 全屏事件
         handleFullScreen() {
@@ -171,6 +184,7 @@ div .logo {
     text-align: center;
     line-height: 60px;
 }
+
 .header-right {
     float: right;
     padding-right: 50px;
@@ -180,20 +194,30 @@ div .logo {
     height: 70px;
     align-items: center;
 }
+.btn-refresh {
+    float: right;
+    line-height: 67px;
+    color: white;
+    font-size: 23px;
+    margin-left: 7px;
+    margin-right: 7px;
+    cursor: pointer;
+}
 .btn-fullscreen {
     color: white;
     transform: rotate(45deg);
-    margin-left: 8px;
+    margin-left: 40px;
     font-size: 24px;
     width: 0px;
     height: 0px;
-    text-align: center;
-    border-radius: 15px;
     line-height: 70px;
+    cursor: pointer;
 }
 .btn-bell {
+    float: right;
     height: 50px;
-    text-align: center;
+    margin-left: 3px;
+    margin-right: 20px;
     border-radius: 15px;
     cursor: pointer;
     line-height: 70px;
@@ -209,7 +233,7 @@ div .logo {
 
 }
 .btn-bell .el-icon-bell {
-    font-size: 25px;
+    font-size: 23px;
     color: #fff;
 }
 .user-name {

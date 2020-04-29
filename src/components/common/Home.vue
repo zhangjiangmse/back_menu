@@ -5,9 +5,8 @@
         </el-header>
         <el-container>
             <Aside ref="aside"></Aside>
-            <el-main style="padding-bottom: 0px;padding-top: 0px;padding-left: 0px">
-
-                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable @contextmenu.prevent.native="openContextMenu"
+            <el-main style="padding: 0px">
+                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable
                              @tab-remove="removeTab" @tab-click="clickTab">
                         <el-tab-pane
                                 v-for="(item) in editableTabs"
@@ -15,7 +14,7 @@
                                 :label="item.title"
                                 :name="item.title">
                                     <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
-                                    <div v-else style="height: 600px;width:100%;">
+                                    <div v-else style="height: 600px;width:100%;padding-top: 5px;padding-left: 10px;overflow-y: scroll;">
                                         <keep-alive :include="keepAliveTagsList">
                                             <router-view></router-view>
                                         </keep-alive>
@@ -78,7 +77,6 @@
             }
         },
         watch: {
-
             contextMenuVisible() {
                 if (this.contextMenuVisible) {
                     document.body.addEventListener("click", this.closeContextMenu);
@@ -88,12 +86,12 @@
             }
         },
        methods: {
-           reload() {
-
-               //let _this = this
+           reload(title) {
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
-               let currentContextTabId = this.editableTabsValue['active-tab']
-
+               let currentContextTabId = title
+               if(title == null ||title == ''){
+                   currentContextTabId = this.editableTabsValue['active-tab']
+               }
                this.$store.commit("saveCurContextTabId", currentContextTabId);
                this.curTabReload()
 
@@ -188,7 +186,6 @@
                }
                let key = this.editableTabs[currTabIndex].key;
                let keyPath = this.editableTabs[currTabIndex].keyPath
-               console.log(key,keyPath)
 
                let curTabName =  this.editableTabs[currTabIndex].name
                let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
@@ -196,8 +193,10 @@
                    return item != curTabName
                })
                this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
-               this.$router.replace('/')
 
+               this.$router.replace('/')
+               // eslint-disable-next-line no-debugger
+               debugger
                this.$nextTick(()=>{
                    this.$refs.aside.handleSelected(key,keyPath);
                })
