@@ -3,7 +3,14 @@
         <el-row>
             <h2>附：官方图标 <el-link type="primary " href="https://element.eleme.cn/#/zh-CN/component/icon" target="_blank">https://element.eleme.cn/#/zh-CN/component/icon</el-link></h2>
             <p>使用方法 直接通过设置类名为 el-icon-iconName 来使用即可。例如：</p>
-            <i class="el-icon-edit"></i> <el-button type="primary" icon="el-icon-search">搜索</el-button>
+            <p class="example-p">
+                <i class="el-icon-edit" style="font-size: 30px"></i>
+                <span>&lt;i class=&quot;el-icon-<span style="color: #ff5900">edit</span>&quot;&gt;&lt;/i&gt;</span>
+            </p>
+            <p class="example-p">
+                <el-button type="primary" icon="el-icon-search">搜索</el-button>
+                <span>&lt;i class=&quot;el-icon-<span style="color: #ff5900">search</span>&quot;&gt;&lt;/i&gt;</span>
+            </p>
         </el-row>
         <el-divider></el-divider>
         <el-row>
@@ -49,11 +56,8 @@
                     'word1',
                     'excel',
                     'excel1',
-                    'excel1-copy',
-                    'word1',
-                    'excel',
-                    'excel1',
                     'excel1-copy'
+
                 ],
             }
         },
