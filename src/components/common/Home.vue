@@ -13,8 +13,8 @@
                                 :key="item.name"
                                 :label="item.title"
                                 :name="item.title">
-                                    <div v-if="item.type == 'remote'" v-html="item.content" style="margin: 0;height:600px;width: 100%;"></div>
-                                    <div v-else style="height: 600px;width:100%;padding-top: 5px;padding-left: 10px;overflow-y: scroll;">
+                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv" ></div>
+                                    <div v-else class="localTabDiv">
                                         <keep-alive :include="keepAliveTagsList">
                                             <router-view></router-view>
                                         </keep-alive>
@@ -282,5 +282,18 @@
     }
     .contextmenu li button{
        color: #2c3e50;
+    }
+    .remoteTabDiv {
+        margin: 0;
+        height:600px;
+        width: 100%;
+    }
+    .localTabDiv {
+        height: 600px;
+        width:99%;
+        padding-top: 5px;
+        padding-left: 10px;
+        overflow-y: auto;
+
     }
 </style>
