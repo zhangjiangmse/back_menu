@@ -1,27 +1,26 @@
 <template>
     <el-row>
         <!-- 折叠按钮 -->
-        <el-col :xs="1" :sm="1" :md="1" :lg="1" :xl="1">
+        <el-col :xs="1" :sm="2" :md="2" :lg="1" :xl="1">
             <div class="collapse-btn" @click="collapseChage">
                 <i v-if="!collapse" class="el-icon-s-fold"></i>
                 <i v-else class="el-icon-s-unfold"></i>
             </div>
         </el-col>
-        <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+        <el-col :xs="2" :sm="4" :md="4" :lg="2" :xl="2" class="hidden-xs-only">
             <div class="logo">后台管理系统</div>
         </el-col>
-        <el-col :xs="16" :sm="16" :md="16" :lg="16" :xl="16">
+        <el-col :xs="2" :sm="8" :md="10" :lg="16" :xl="16" >
             <div style="min-height: 36px;"></div>
         </el-col>
-        <el-col :xs="2" :sm="2" :md="2" :lg="2" :xl="2">
+        <el-col :xs="7" :sm="4" :md="4" :lg="2" :xl="2">
 
             <!-- 全屏显示 -->
-            <div  class="btn-fullscreen" @click="handleFullScreen">
+            <div  class="btn-fullscreen hidden-lg-and-down" @click="handleFullScreen">
                 <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
                     <i class="el-icon-rank"></i>
                 </el-tooltip>
             </div>
-
             <!-- 消息中心 -->
             <div class="btn-bell">
                 <el-tooltip
@@ -42,7 +41,7 @@
                 </el-tooltip>
             </div>
         </el-col>
-        <el-col :xs="3" :sm="3" :md="3" :lg="3" :xl="3">
+        <el-col :xs="14" :sm="6" :md="4" :lg="3" :xl="3">
             <!-- 用户头像 -->
             <div class="user-avator" style="float: left">
                 <img src="../../assets/img/img.jpg" />
@@ -162,6 +161,7 @@ export default {
 };
 </script>
 <style scoped>
+
 .header {
     position: relative;
     box-sizing: border-box;
