@@ -1,9 +1,11 @@
 <template>
     <div>
-        <el-row style="margin: 5px">
-            <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="el_row_condition">
-                <el-input v-model="nameValue" placeholder="请输入姓名" style="width: 150px" size="mini"></el-input>
-                <el-select v-model="sexValue" placeholder="请选择性别" size="mini" style="width: 150px">
+        <el-row  style="margin-bottom: 10px">
+            <el-col :xs="10" :sm="4" :md="4" :lg="3" :xl="3" class="el_row_condition">
+                <el-input v-model="nameValue" placeholder="请输入姓名"  size="mini"></el-input>
+            </el-col>
+            <el-col :xs="11" :sm="4" :md="4" :lg="3" :xl="3" class="el_row_condition">
+                <el-select v-model="sexValue" placeholder="请选择性别" size="mini">
                     <el-option
                             v-for="item in options"
                             :key="item.value"
@@ -12,24 +14,24 @@
                     </el-option>
                 </el-select>
             </el-col>
-            <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+            <el-col :xs="24" :sm="16" :md="16" :lg="18" :xl="18">
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="queryAll" >搜索</el-button>
                 <el-button type="primary" size="mini" icon="el-icon-edit" @click="add" >新增</el-button>
-                <el-button type="primary" size="mini" icon="el-icon-delete" @click="deleteAll" >批量删除</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-delete" @click="deleteAll" >删除</el-button>
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportExcel" >导出</el-button>
                 <el-button type="primary" size="mini" icon="el-icon-refresh" @click="cur_reload" >刷新</el-button>
             </el-col>
         </el-row>
-        <el-row style="margin-left: 5px">
+        <el-row class="el_row_table">
             <el-table :data="tableData" border style="width: 100%;" size="mini"  :default-sort="{prop:'date',order:'descending'}"
                       :max-height="maxTableHeight" :height="tableHeight" @selection-change="handleSelectionChange">
                 <el-table-column
                         type="selection" fixed
-                        width="55">
+                        width="40">
                 </el-table-column>
                 <el-table-column fixed
                         type="index"
-                        width="50">
+                        width="40">
                 </el-table-column>
                 <template v-for="item in tableLabel">
                     <el-table-column :key ="item.prop"  :fixed="item.fixed" align="center"
@@ -50,7 +52,7 @@
                 </el-table-column>
             </el-table>
         </el-row>
-        <el-row style="text-align: right;margin: 20px">
+        <el-row style="text-align: right;margin: 10px">
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -329,15 +331,22 @@
             };
         },
         created(){
-            // eslint-disable-next-line no-debugger
-            debugger
-            let height = this.$parent.$el.parentElement.offsetHeight;
-            this.maxTableHeight = height
-            //设定Table的高度
-            this.tableHeight = this.maxTableHeight * 0.8
-            this.queryAll();
+            this.initTableAttr();
+
+            // setTimeout(() =>{
+                this.queryAll();
+            // },0.01);
+            // this.$nextTick(()=>{
+            //     this.queryAll();
+            // })
         },
         methods:{
+            initTableAttr(){
+                let height = this.$parent.$el.parentElement.offsetHeight;
+                this.maxTableHeight = height
+                //设定Table的高度
+                this.tableHeight = this.maxTableHeight * 0.84
+            },
             cur_reload(){
                 let title = this.TabName
                 this.reload(title)
@@ -443,6 +452,9 @@
 <style>
     .el-form-item {
         margin-bottom: 0px;
+    }
+    .el_row_table {
+        margin: 0 3px;
     }
     .el_row_condition div{
         margin:0 3px;

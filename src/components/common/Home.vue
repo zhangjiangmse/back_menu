@@ -194,7 +194,7 @@
                })
                this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
 
-               this.$router.replace('/')
+               this.$router.replace('/black')
                // eslint-disable-next-line no-debugger
                debugger
                this.$nextTick(()=>{
@@ -286,11 +286,11 @@
     .remoteTabDiv {
         margin: 0;
         height:600px;
-        width: 100%;
+        width: 99.4%;
     }
     .localTabDiv {
         height: 600px;
-        width:99%;
+        width:99.4%;
         padding-top: 5px;
         padding-left: 10px;
         overflow-y: auto;

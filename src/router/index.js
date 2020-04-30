@@ -6,9 +6,14 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 const routes = [
     {
-        name:'HelloWorld',
+        name:'Black',
         path: '/',
-        redirect: '/pages/helloWorld'
+        redirect: '/black'
+    },
+    {
+        name:'Black',
+        path:'/black',
+        component:() => import('@/components/common/Black.vue'),
     },
     {
         name:'HelloWorld',
