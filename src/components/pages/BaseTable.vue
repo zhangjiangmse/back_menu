@@ -23,8 +23,12 @@
             </el-col>
         </el-row>
         <el-row class="el_row_table">
-            <el-table :data="tableData" border style="width: 100%;" size="mini"  :default-sort="{prop:'date',order:'descending'}"
-                      :max-height="maxTableHeight" :height="tableHeight" @selection-change="handleSelectionChange">
+            <el-table :data="tableData" border style="width: 100%;" size="mini"
+                      :default-sort="{prop:'date',order:'descending'}"
+                      :max-height="maxTableHeight" :height="tableHeight" @selection-change="handleSelectionChange"
+                      :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+
+            >
                 <el-table-column
                         type="selection" fixed
                         width="40">
@@ -86,8 +90,8 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false" size="mini">取 消</el-button>
-                <el-button @click="dialogFormVisible = false" size="mini">保 存</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false" size="mini">确 定</el-button>
+                <el-button @click="saveInfo" size="mini">保 存</el-button>
+                <el-button type="primary" @click="confirm" size="mini">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -332,20 +336,14 @@
         },
         created(){
             this.initTableAttr();
-
-            // setTimeout(() =>{
-                this.queryAll();
-            // },0.01);
-            // this.$nextTick(()=>{
-            //     this.queryAll();
-            // })
+            this.queryAll();
         },
         methods:{
             initTableAttr(){
-                let height = this.$parent.$el.parentElement.offsetHeight;
-                this.maxTableHeight = height
+                let init_maxTableHeight = this.$store.getters.tabPanelHeight
+                this.maxTableHeight = init_maxTableHeight
                 //设定Table的高度
-                this.tableHeight = this.maxTableHeight * 0.84
+                this.tableHeight = init_maxTableHeight * 0.85
             },
             cur_reload(){
                 let title = this.TabName
@@ -392,16 +390,15 @@
 
             },
             add(){
+                //this.form = []
                 //弹窗
                 this.dialogFormVisible = true
-                // eslint-disable-next-line no-debugger
-                debugger
+
                 //级联面板 获取 省市县 联动数据
                 this.pcaOptions = pcaJson;
             },
             deleteAll(){
-                // eslint-disable-next-line no-debugger
-                debugger
+
                 let selected = []
                 this.multipleSelection.forEach(item=>{
                     selected.push(item.date)
@@ -436,6 +433,51 @@
             handleChange(value) {
                 console.log(value);
             },
+            // 弹窗内 -> 确定按钮,保存完毕， 关闭窗口
+            confirm(){
+                this.saveInfo()
+                //关闭窗口
+                this.dialogFormVisible = false
+            },
+            // 弹窗内 -> 保存按钮，保存完毕，不关闭窗口
+            saveInfo(){
+                let _this = this
+
+                let pca =  this.form.pca
+                //获取省份信息
+                let arr = _this.pcaOptions.filter((item)=>{
+                    if(item.code == pca[0]){
+                        return item
+                    }
+                })
+                let provicenObj = arr[0]
+                // 获取地市信息
+                arr = provicenObj.children.filter((item)=>{
+                    if(item.code == pca[1]){
+                        return item
+                    }
+                })
+                let cityObj = arr[0]
+                // 获取区域信息
+                arr = cityObj.children.filter((item)=>{
+                    if(item.code == pca[2]){
+                        return item
+                    }
+                })
+                let areaObj = arr[0]
+                console.log(provicenObj.name ,cityObj.name,areaObj.name)
+                // 构造新的对象
+                let newObj = {"name":_this.form.name,"sex":_this.form.sex,"province":provicenObj.name,"city":cityObj.name,"address":_this.form.address}
+
+                this.remote_tableData.push(newObj)
+                this.$notify({
+                    title: this.$t('message.tip'),
+                    message: this.$t('message.save_success'),
+                    position: 'bottom-right'
+                });
+
+            },
+
             //分页
             handleSizeChange(pageSize){
                 this.pageSize = pageSize
@@ -459,4 +501,5 @@
     .el_row_condition div{
         margin:0 3px;
     }
+
 </style>

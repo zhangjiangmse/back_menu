@@ -5,7 +5,8 @@ const en = {
         'tip':'tip',
         'Switch_language_successfully':'Switch language successfully!',
         'en':'English',
-        'cn':'中文'
+        'cn':'中文',
+        'save_success':'Save success'
     },
     ...enLocale
 }

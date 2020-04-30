@@ -214,7 +214,7 @@
                 //当前tab不存在，添加新的tab页，并激活
                 let content = ''
                 if(tabNode.type == "local"){
-                    this.$router.replace(tabNode.path)
+                    this.$router.push(tabNode.path)
                 }else if(tabNode.type == "remote"){
                     content = "<object type='text/html' data='"+tabNode.path+"' width='100%' height='100%'></object>"
                 }

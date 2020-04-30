@@ -6,7 +6,8 @@ const cn = {
         'tip':'提示',
         'Switch_language_successfully':'切换语言成功!',
         'en':'English',
-        'cn':'中文'
+        'cn':'中文',
+        'save_success':'保存成功'
     },
     ...zhLocale
 }
