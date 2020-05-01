@@ -10,14 +10,14 @@
         <el-col :xs="2" :sm="4" :md="4" :lg="2" :xl="2" class="hidden-xs-only">
             <div class="logo">后台管理系统</div>
         </el-col>
-        <el-col :xs="2" :sm="8" :md="10" :lg="16" :xl="16" >
+        <el-col :xs="1" :sm="7" :md="8" :lg="14" :xl="14" >
             <div style="min-height: 36px;"></div>
         </el-col>
-        <el-col :xs="7" :sm="4" :md="4" :lg="2" :xl="2">
+        <el-col :xs="8" :sm="4" :md="4" :lg="2" :xl="2">
 
             <!-- 全屏显示 -->
-            <div  class="btn-fullscreen hidden-md-and-down" @click="handleFullScreen">
-                <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
+            <div  class="btn-fullscreen " @click="handleFullScreen">
+                <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom" class="hidden-md-and-down">
                     <i class="el-icon-rank"></i>
                 </el-tooltip>
             </div>
@@ -41,27 +41,29 @@
                 </el-tooltip>
             </div>
         </el-col>
-        <el-col :xs="14" :sm="6" :md="4" :lg="3" :xl="3">
-            <!-- 用户头像 -->
-            <div class="user-avator" style="float: left">
-                <img src="../../assets/img/img.jpg" />
-            </div>
-            <div style="float: left">
-                <!-- 用户名下拉菜单 -->
-                <el-dropdown class="user-name" trigger="click" @command="handleCommand" style="float: left" size="mini" >
+        <el-col :xs="14" :sm="7" :md="6" :lg="5" :xl="5">
+            <el-col :xs="16" :sm="16" :md="16" :lg="12" :xl="12">
+                <div class="user-avator" style="float: left">
+                    <img src="../../assets/img/img.jpg" />
+                </div>
+                <div style="float: left">
+                    <!-- 用户名下拉菜单 -->
+                    <el-dropdown class="user-name" trigger="click" @command="handleCommand" style="float: left" size="mini" >
                         <span class="el-dropdown-link">
                             {{username}}
                             <i class="el-icon-caret-bottom"></i>
                         </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <a href="https://github.com/zhangjiangmse/back_menu" target="_blank">
-                         <el-dropdown-item>项目仓库</el-dropdown-item>
-                        </a>
-                        <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </div>
-            <div style="float: left;margin-left: 10px">
+                        <el-dropdown-menu slot="dropdown">
+                            <a href="https://github.com/zhangjiangmse/back_menu" target="_blank">
+                                <el-dropdown-item>项目仓库</el-dropdown-item>
+                            </a>
+                            <el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </el-col>
+            <!-- 用户头像 -->
+            <el-col :xs="8" :sm="8" :md="8" :lg="12" :xl="12">
                 <!-- 语言下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand_lang" style="float: left" size="mini">
                         <span class="el-dropdown-link">
@@ -73,7 +75,7 @@
                         <el-dropdown-item divided command="en">{{$t('message.en')}}</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
-            </div>
+            </el-col>
         </el-col>
     </el-row>
 </template>
