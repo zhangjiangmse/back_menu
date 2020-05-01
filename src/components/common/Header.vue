@@ -16,7 +16,7 @@
         <el-col :xs="7" :sm="4" :md="4" :lg="2" :xl="2">
 
             <!-- 全屏显示 -->
-            <div  class="btn-fullscreen hidden-lg-and-down" @click="handleFullScreen">
+            <div  class="btn-fullscreen hidden-md-and-down" @click="handleFullScreen">
                 <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
                     <i class="el-icon-rank"></i>
                 </el-tooltip>

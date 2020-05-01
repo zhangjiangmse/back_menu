@@ -38,7 +38,8 @@ const routes = [
     {
         name:'BaseTable',
         path:'/pages/BaseTable',
-        component:() => import('@/components/pages/BaseTable.vue')
+        component:() => import('@/components/pages/BaseTable.vue'),
+        meta: { title: '基础表格' }
     },
     {
         name:'Icon',

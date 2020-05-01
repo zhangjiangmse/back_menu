@@ -20,10 +20,9 @@ axios.interceptors.request.use(
         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.token = `${token}`;
         }
-        console.log(url)
-        // if (config.url.indexOf(url) === -1) {
-        //     config.url = url + config.url;/*拼接完整请求路径*/
-        // }
+        if (config.url.indexOf(url) === -1) {
+            config.url = url + config.url;/*拼接完整请求路径*/
+        }
         //在发送请求之前做某件事，序列化参数->视请求头而定
         if(config.method  === 'post'){
             config.data = qs.stringify(config.data);
