@@ -6,46 +6,59 @@ import VueRouter from "vue-router";
 Vue.use(VueRouter);
 const routes = [
     {
-        name:'Black',
+        name:'Login',
         path: '/',
-        redirect: '/black'
+        redirect: '/Login'
     },
     {
-        name:'Black',
-        path:'/black',
-        component:() => import('@/components/common/Black.vue'),
+        name:'Home',
+        path: '/Home',
+        component:() => import('@/components/common/Home.vue'),
+        children: [
+            {
+                name:'Black',
+                path:'/Home/pages/black',
+                component:() => import('@/components/common/Black.vue'),
+            },
+            {
+                name:'HelloWorld',
+                path:'/Home/pages/helloWorld',
+                component:() => import('@/components/HelloWorld.vue'),
+            },
+            {
+                name:'SettingInfo',
+                path:'/Home/pages/SettingInfo',
+                component:() => import('@/components/pages/SettingInfo.vue')
+            },
+            {
+                name:'403',
+                path:'/Home/pages/403',
+                component:() => import('@/components/pages/403.vue')
+            },
+            {
+                name:'Donate',
+                path:'/Home/pages/Donate',
+                component:() => import('@/components/pages/Donate.vue')
+            },
+            {
+                name:'BaseTable',
+                path:'/Home/pages/BaseTable',
+                component:() => import('@/components/pages/BaseTable.vue'),
+                meta: { title: '基础表格' }
+            },
+            {
+                name:'Icon',
+                path:'/Home/pages/Icon',
+                component:() => import('@/components/pages/Icon.vue')
+            }
+        ]
     },
     {
-        name:'HelloWorld',
-        path:'/pages/helloWorld',
-        component:() => import('@/components/HelloWorld.vue'),
+        name:'Login',
+        path:'/login',
+        component:() => import('@/components/pages/Login.vue'),
     },
-    {
-        name:'SettingInfo',
-        path:'/pages/SettingInfo',
-        component:() => import('@/components/pages/SettingInfo.vue')
-    },
-    {
-        name:'403',
-        path:'/pages/403',
-        component:() => import('@/components/pages/403.vue')
-    },
-    {
-        name:'Donate',
-        path:'/pages/Donate',
-        component:() => import('@/components/pages/Donate.vue')
-    },
-    {
-        name:'BaseTable',
-        path:'/pages/BaseTable',
-        component:() => import('@/components/pages/BaseTable.vue'),
-        meta: { title: '基础表格' }
-    },
-    {
-        name:'Icon',
-        path:'/pages/Icon',
-        component:() => import('@/components/pages/Icon.vue')
-    }
+
 
 ]
 

@@ -13,7 +13,7 @@
                                 :key="item.name"
                                 :label="item.title"
                                 :name="item.title">
-                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv" ></div>
+                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv" :style="conheight"></div>
                                     <div v-else class="localTabDiv" :style="conheight">
                                         <keep-alive :include="keepAliveTagsList">
                                             <router-view></router-view>
@@ -66,7 +66,6 @@
             };
         },
         created() {
-
             window.addEventListener('resize', this.getHeight);
             this.getHeight()
         },

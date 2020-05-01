@@ -92,7 +92,7 @@
                         title:"本地页面",
                         name:'HelloWorld',
                         component:'@/components/HelloWorld.vue',
-                        path:'/pages/helloWorld',
+                        path:'/Home/pages/helloWorld',
                         type:'local'
                     },
                     {
@@ -100,7 +100,7 @@
                         title:"基础表格",
                         name:'BaseTable',
                         component:'@/components/pages/BaseTable.vue',
-                        path:'/pages/BaseTable',
+                        path:'/Home/pages/BaseTable',
                         icon:'el-icon-setting',
                         type:'local'
                     },
@@ -109,7 +109,7 @@
                         title:"设置页面",
                         name:'SettingInfo',
                         component:'@/components/pages/SettingInfo.vue',
-                        path:'/pages/settingInfo',
+                        path:'/Home/pages/settingInfo',
                         icon:'el-icon-setting',
                         type:'local'
                     },
@@ -118,7 +118,7 @@
                         title:"403",
                         name:'403',
                         component:'@/components/pages/403.vue',
-                        path:'/pages/403',
+                        path:'/Home/pages/403',
                         type:'local'
                     },
                     {
@@ -127,7 +127,7 @@
                         name:'自定义图标',
                         icon:'iconfont icon-smell',
                         component:'@/components/pages/Icon.vue',
-                        path:'/pages/Icon',
+                        path:'/Home/pages/Icon',
                         type:'local'
                     },
                     {
@@ -136,7 +136,7 @@
                         name:'Donate',
                         icon:"iconfont icon-redpacket_fill",
                         component:'@/components/pages/Donate.vue',
-                        path:'/pages/Donate',
+                        path:'/Home/pages/Donate',
                         type:'local'
                     }
                 ]
@@ -195,6 +195,8 @@
                 console.log("关闭：" + key, keyPath);
             },
             addTab(tabNode) {
+                // eslint-disable-next-line no-debugger
+                debugger
                 let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
                 new_tab_list_keepAlive.push(tabNode.name)
                 this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
@@ -208,7 +210,9 @@
                 })
                 if(is_Existed){
                     this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
-                    this.$router.replace(tabNode.path);
+                    if(tabNode.type == "local"){
+                        this.$router.replace(tabNode.path);
+                    }
                     return
                 }
                 //当前tab不存在，添加新的tab页，并激活
