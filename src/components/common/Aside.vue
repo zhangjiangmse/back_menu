@@ -131,6 +131,15 @@
                         type:'local'
                     },
                     {
+                        index:'8',
+                        title:"拖拽组件",
+                        name:'拖拽组件',
+                        icon:'el-icon-rank',
+                        component:'@/components/pages/DragList.vue',
+                        path:'/Home/pages/DragList',
+                        type:'local'
+                    },
+                    {
                         index:'30',
                         title:"支持作者",
                         name:'Donate',
@@ -195,8 +204,7 @@
                 console.log("关闭：" + key, keyPath);
             },
             addTab(tabNode) {
-                // eslint-disable-next-line no-debugger
-                debugger
+
                 let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
                 new_tab_list_keepAlive.push(tabNode.name)
                 this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)

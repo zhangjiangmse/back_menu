@@ -50,6 +50,11 @@ const routes = [
                 name:'Icon',
                 path:'/Home/pages/Icon',
                 component:() => import('@/components/pages/Icon.vue')
+            },
+            {
+                name:'DragList',
+                path:'/Home/pages/DragList',
+                component:() => import('@/components/pages/DragList.vue')
             }
         ]
     },

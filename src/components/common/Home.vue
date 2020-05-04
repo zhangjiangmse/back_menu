@@ -208,6 +208,11 @@
 
                this.$nextTick(()=>{
                    this.$refs.aside.handleSelected(key,keyPath);
+                   this.$notify({
+                       title: this.$t('message.tip'),
+                       message: "刷新成功",
+                       position: 'bottom-right'
+                   });
                })
            },
            // 关闭所有标签页

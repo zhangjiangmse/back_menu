@@ -5,6 +5,10 @@
 </template>
 <script>
     export default {
-        name:'Black'
+        name:'Black',
+        methods:{
+
+        }
     }
+
 </script>
