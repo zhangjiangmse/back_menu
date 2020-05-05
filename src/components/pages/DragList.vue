@@ -39,14 +39,33 @@
                     <draggable v-model="todo" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="todo" class="item-ul">
                             <el-card v-for="item in todo" class="drag-list" :key="item.id" shadow="hover">
-                                <div>{{item.content}}</div>
-                                <div>{{item.beginDate}}</div>
-                                <div>{{item.takeHours}}</div>
-                                <div>{{item.author}}</div>
+                                <div slot="header" class="clearfix">
+                                    <el-row>
+                                        <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18" style="height: 20px">
+                                            <span style="font-weight:800 ">标题：</span>
+                                            <span v-show="item.content.length>=0&&item.content.length<=10">{{item.content}}</span>
+                                            <span v-show="item.content.length>10">{{item.content.slice(0,10)}}...</span>
+                                        </el-col>
+                                        <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6" style="height: 20px">
+                                            <el-tooltip effect="dark" content="查看详情" placement="top-start">
+                                                <el-button type="text" icon="el-icon-view" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="编辑" placement="top-start">
+                                                <el-button type="text" icon="el-icon-edit" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="删除" placement="top-start">
+                                                <el-button type="text" icon="el-icon-delete" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                                <div><span style="font-weight: lighter ">描述：</span>{{item.content}}</div>
+                                <div><span style="font-weight: lighter ">开始日期：</span>{{item.beginDate}}</div>
+                                <div><span style="font-weight: lighter ">耗时：</span>{{item.takeHours}} 小时</div>
+                                <div><span style="font-weight: lighter ">负责人：</span>{{item.author}}</div>
                             </el-card>
                         </transition-group>
                     </draggable>
-
                 </el-col>
                 <el-col :xs="1" :sm="1" :md="1" :lg="1" :xl="1" >
                     <div v-show="lineLoadKey" class="selfDefineLine" :style="{'height':this.selfLineHeight}">
@@ -56,10 +75,30 @@
                     <draggable v-model="doing" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="doing" class="item-ul">
                             <el-card v-for="item in doing" class="drag-list" :key="item.id" shadow="hover">
-                                <div>{{item.content}}</div>
-                                <div>{{item.beginDate}}</div>
-                                <div>{{item.takeHours}}</div>
-                                <div>{{item.author}}</div>
+                                <div slot="header" class="clearfix">
+                                    <el-row>
+                                        <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18" style="height: 20px">
+                                            <span style="font-weight:800 ">标题：</span>
+                                            <span v-show="item.content.length>=0&&item.content.length<=10">{{item.content}}</span>
+                                            <span v-show="item.content.length>10">{{item.content.slice(0,10)}}...</span>
+                                        </el-col>
+                                        <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6" style="height: 20px">
+                                            <el-tooltip effect="dark" content="查看详情" placement="top-start">
+                                                <el-button type="text" icon="el-icon-view" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="编辑" placement="top-start">
+                                                <el-button type="text" icon="el-icon-edit" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="删除" placement="top-start">
+                                                <el-button type="text" icon="el-icon-delete" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                                <div><span style="font-weight: lighter ">描述：</span>{{item.content}}</div>
+                                <div><span style="font-weight: lighter ">开始日期：</span>{{item.beginDate}}</div>
+                                <div><span style="font-weight: lighter ">耗时：</span>{{item.takeHours}} 小时</div>
+                                <div><span style="font-weight: lighter ">负责人：</span>{{item.author}}</div>
                             </el-card>
                         </transition-group>
                     </draggable>
@@ -72,10 +111,30 @@
                     <draggable v-model="done" @remove="removeHandle" :options="dragOptions">
                         <transition-group tag="div" id="done" class="item-ul">
                             <el-card v-for="item in done" class="drag-list" :key="item.id" shadow="hover">
-                                <div>{{item.content}}</div>
-                                <div>{{item.beginDate}}</div>
-                                <div>{{item.takeHours}}</div>
-                                <div>{{item.author}}</div>
+                                <div slot="header" class="clearfix">
+                                    <el-row>
+                                        <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18" style="height: 20px;">
+                                            <span style="font-weight:800 ">标题：</span>
+                                            <span v-show="item.content.length>=0&&item.content.length<=10">{{item.content}}</span>
+                                            <span v-show="item.content.length>10">{{item.content.slice(0,10)}}...</span>
+                                        </el-col>
+                                        <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6" style="height: 20px">
+                                            <el-tooltip effect="dark" content="查看详情" placement="top-start">
+                                                <el-button type="text" icon="el-icon-view" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="编辑" placement="top-start">
+                                                <el-button type="text" icon="el-icon-edit" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                            <el-tooltip effect="dark" content="删除" placement="top-start">
+                                                <el-button type="text" icon="el-icon-delete" style="padding: 0"></el-button>
+                                            </el-tooltip>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                                <div><span style="font-weight: lighter ">描述：</span>{{item.content}}</div>
+                                <div><span style="font-weight: lighter ">开始日期：</span>{{item.beginDate}}</div>
+                                <div><span style="font-weight: lighter ">耗时：</span>{{item.takeHours}} 小时</div>
+                                <div><span style="font-weight: lighter ">负责人：</span>{{item.author}}</div>
                             </el-card>
                         </transition-group>
                     </draggable>
@@ -195,7 +254,7 @@
 <style>
     .drag-area {
         padding-top: 10px ;
-        min-height:600px;
+        min-height:500px;
     }
     .item-title{
         height: 30px;
@@ -211,15 +270,23 @@
 
     .selfDefineLine{
         background-color: darkgray;
-        min-height: 580px;
+        min-height: 490px;
         width: 1px;
         margin:10px 25px;
     }
-
+    .el-card__header {
+        padding: 5px 10px;
+        border-bottom: 1px solid #EBEEF5;
+        box-sizing: border-box;
+    }
+    .el-card__body {
+        padding: 0 10px;
+    }
     .drag-list {
+        font-size: 14px;
         height: 110px;
         border: #6CCBFF 1px solid;
-        margin: 0.05em 1em;
+        margin: 0.5em 1em;
         background-color: #fff;
         border-radius: 10px;
     }
