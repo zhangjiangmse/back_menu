@@ -129,15 +129,25 @@
                         component:'@/components/pages/Icon.vue',
                         path:'/Home/pages/Icon',
                         type:'local'
+
                     },
                     {
                         index:'8',
                         title:"拖拽组件",
                         name:'拖拽组件',
                         icon:'el-icon-rank',
-                        component:'@/components/pages/DragList.vue',
-                        path:'/Home/pages/DragList',
-                        type:'local'
+                        children: [
+                            {
+                                index:'8-1',
+                                title:"拖拽列表",
+                                name:'拖拽列表',
+                                icon:'',
+                                component:'@/components/pages/DragList.vue',
+                                path:'/Home/pages/DragList',
+                                type:'local',
+                            }
+                        ]
+
                     },
                     {
                         index:'30',

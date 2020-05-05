@@ -210,7 +210,7 @@
                    this.$refs.aside.handleSelected(key,keyPath);
                    this.$notify({
                        title: this.$t('message.tip'),
-                       message: "刷新成功",
+                       message: "刷新成功（如显示空白，请重试刷新！）",
                        position: 'bottom-right'
                    });
                })
