@@ -92,7 +92,7 @@
                         title:"本地页面",
                         name:'HelloWorld',
                         component:'@/components/HelloWorld.vue',
-                        path:'/Home/pages/helloWorld',
+                        path:'/home/pages/helloWorld',
                         type:'local'
                     },
                     {
@@ -100,7 +100,7 @@
                         title:"基础表格",
                         name:'BaseTable',
                         component:'@/components/pages/BaseTable.vue',
-                        path:'/Home/pages/BaseTable',
+                        path:'/home/pages/base-table',
                         icon:'el-icon-setting',
                         type:'local'
                     },
@@ -109,7 +109,7 @@
                         title:"设置页面",
                         name:'SettingInfo',
                         component:'@/components/pages/SettingInfo.vue',
-                        path:'/Home/pages/settingInfo',
+                        path:'/home/pages/settingInfo',
                         icon:'el-icon-setting',
                         type:'local'
                     },
@@ -118,7 +118,7 @@
                         title:"403",
                         name:'403',
                         component:'@/components/pages/403.vue',
-                        path:'/Home/pages/403',
+                        path:'/home/pages/403',
                         type:'local'
                     },
                     {
@@ -127,7 +127,7 @@
                         name:'自定义图标',
                         icon:'iconfont icon-smell',
                         component:'@/components/pages/Icon.vue',
-                        path:'/Home/pages/Icon',
+                        path:'/home/pages/Icon',
                         type:'local'
 
                     },
@@ -143,7 +143,25 @@
                                 name:'拖拽列表',
                                 icon:'',
                                 component:'@/components/pages/DragList.vue',
-                                path:'/Home/pages/DragList',
+                                path:'/home/pages/DragList',
+                                type:'local',
+                            }
+                        ]
+
+                    },
+                    {
+                        index:'9',
+                        title:"用户管理",
+                        name:'用户管理',
+                        icon:'el-icon-setting',
+                        children: [
+                            {
+                                index:'9-1',
+                                title:"系统用户",
+                                name:'系统用户',
+                                icon:'el-icon-user',
+                                component:'@/components/pages/system/SystemUser.vue',
+                                path:'/home/pages/system-user',
                                 type:'local',
                             }
                         ]
@@ -155,7 +173,7 @@
                         name:'Donate',
                         icon:"iconfont icon-redpacket_fill",
                         component:'@/components/pages/Donate.vue',
-                        path:'/Home/pages/Donate',
+                        path:'/home/pages/Donate',
                         type:'local'
                     }
                 ]

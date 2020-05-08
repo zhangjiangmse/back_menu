@@ -9,6 +9,7 @@ const store = new Vuex.Store({
         curContextTabId:'',
         keepAliveTagsList:[],
         tabPanelHeight:'',
+        windowWidth:'',
     },
 
     mutations:{//对state进行修改
@@ -24,13 +25,18 @@ const store = new Vuex.Store({
         // 保存Tab面板高度
         saveTabPanelHeight:(state,tabPanelHeight)=>{
             state.tabPanelHeight = tabPanelHeight
+        },
+        //保存页面宽度
+        saveWindowWidth:(state,windowWidth)=>{
+            state.windowWidth = windowWidth
         }
 
 
     },
     getters: {
         keepAliveTagsList: state => state.keepAliveTagsList,
-        tabPanelHeight: state => state.tabPanelHeight
+        tabPanelHeight: state => state.tabPanelHeight,
+        windowWidth: state => state.windowWidth,
     }
 })
 export default store;

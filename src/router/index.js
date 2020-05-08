@@ -12,49 +12,54 @@ const routes = [
     },
     {
         name:'Home',
-        path: '/Home',
+        path: '/home',
         component:() => import('@/components/common/Home.vue'),
         children: [
             {
                 name:'Black',
-                path:'/Home/pages/black',
+                path:'/home/pages/black',
                 component:() => import('@/components/common/Black.vue'),
             },
             {
                 name:'HelloWorld',
-                path:'/Home/pages/helloWorld',
+                path:'/home/pages/helloWorld',
                 component:() => import('@/components/HelloWorld.vue'),
             },
             {
                 name:'SettingInfo',
-                path:'/Home/pages/SettingInfo',
+                path:'/home/pages/SettingInfo',
                 component:() => import('@/components/pages/SettingInfo.vue')
             },
             {
                 name:'403',
-                path:'/Home/pages/403',
+                path:'/home/pages/403',
                 component:() => import('@/components/pages/403.vue')
             },
             {
                 name:'Donate',
-                path:'/Home/pages/Donate',
+                path:'/home/pages/Donate',
                 component:() => import('@/components/pages/Donate.vue')
             },
             {
                 name:'BaseTable',
-                path:'/Home/pages/BaseTable',
+                path:'/home/pages/base-table',
                 component:() => import('@/components/pages/BaseTable.vue'),
                 meta: { title: '基础表格' }
             },
             {
                 name:'Icon',
-                path:'/Home/pages/Icon',
+                path:'/home/pages/Icon',
                 component:() => import('@/components/pages/Icon.vue')
             },
             {
                 name:'DragList',
-                path:'/Home/pages/DragList',
+                path:'/home/pages/DragList',
                 component:() => import('@/components/pages/DragList.vue')
+            },
+            {
+                name:'SystemUser',
+                path:'/home/pages/system-user',
+                component:() => import('@/components/pages/system/SystemUser.vue')
             }
         ]
     },

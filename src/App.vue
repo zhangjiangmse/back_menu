@@ -11,6 +11,11 @@ export default {
   name: 'App',
   components: {
 
+  },
+  // 钩子函数
+  mounted () {
+    //保存屏幕宽度
+    this.$store.commit('saveWindowWidth',document.body.clientWidth)
   }
 }
 </script>

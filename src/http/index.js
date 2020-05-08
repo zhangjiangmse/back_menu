@@ -11,7 +11,11 @@ axios.defaults.timeout = 5000;
 //配置前后端数据交互的请求头：
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // 设置后台的访问地址
-const url = 'http://localhost:8011/member/sdtc';   //配置接口地址
+const url = {
+    'csm-base':'http://localhost:8006/base',
+    'csm-base-member':'http://localhost:8006/member/base',
+    'csm-auth':'http://192.168.99.130/csm-auth/auth'
+};
 
 //添加请求拦截器
 axios.interceptors.request.use(
@@ -21,7 +25,7 @@ axios.interceptors.request.use(
             config.headers.token = `${token}`;
         }
         if (config.url.indexOf(url) === -1) {
-            config.url = url + config.url;/*拼接完整请求路径*/
+            config.url = url[config.baseURL] + config.url;/*拼接完整请求路径*/
         }
         //在发送请求之前做某件事，序列化参数->视请求头而定
         if(config.method  === 'post'){
