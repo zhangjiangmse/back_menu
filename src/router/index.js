@@ -60,6 +60,11 @@ const routes = [
                 name:'SystemUser',
                 path:'/home/pages/system-user',
                 component:() => import('@/components/pages/system/SystemUser.vue')
+            },
+            {
+                name:'RoleManage',
+                path:'/home/pages/role-manage',
+                component:() => import('@/components/pages/system/RoleManage.vue')
             }
         ]
     },

@@ -4,32 +4,32 @@
             <el-form :inline="true" :model="searchListForm" class="demo-form-inline" size="mini">
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item>
-                        <el-input v-model="searchListForm.accountName" placeholder="请输入账号"></el-input>
+                        <el-input v-model="searchListForm.accountName" placeholder="请输入账号" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item >
-                        <el-input v-model="searchListForm.userRealName" placeholder="请输入姓名"></el-input>
+                        <el-input v-model="searchListForm.userRealName" placeholder="请输入姓名" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="5" :md="4" :lg="3" :xl="3">
                     <el-form-item >
-                        <el-input v-model="searchListForm.accountWeChatId" placeholder="请输入微信账号"></el-input>
+                        <el-input v-model="searchListForm.accountWeChatId" placeholder="请输入微信账号" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item>
-                        <el-input v-model="searchListForm.accountTel" placeholder="请输入电话"></el-input>
+                        <el-input v-model="searchListForm.accountTel" placeholder="请输入电话" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item>
-                        <el-input v-model="searchListForm.orgName" placeholder="请输入部门"></el-input>
+                        <el-input v-model="searchListForm.orgName" placeholder="请输入部门" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="5" :md="4" :lg="3" :xl="3">
                     <el-form-item>
-                        <el-input v-model="searchListForm.roleName" placeholder="请输入角色类型"></el-input>
+                        <el-input v-model="searchListForm.roleName" placeholder="请输入角色类型" clearable></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :xs="8" :sm="4" :md="4" :lg="3" :xl="3">
@@ -40,7 +40,7 @@
             </el-form>
         </el-row>
         <el-row style="background-color: #efefef">
-            <el-button type="success" plain @click="addOrEdit" icon="el-icon-plus" size="mini" style="border: 0">新增</el-button>
+            <el-button type="success" plain @click="add" icon="el-icon-plus" size="mini" style="border: 0">新增</el-button>
             <el-button type="success" plain @click="onSubmit" icon="el-icon-refresh" size="mini" style="border: 0">同步呼叫中心用户</el-button>
         </el-row>
         <el-row>
@@ -99,11 +99,11 @@
                     <el-form-item label="用户名：" :label-width="formLabelWidth" prop="name">
                         <el-input v-model="addOrEditForm.name" autocomplete="off" :style="{width:this.addDialogInputWidth}" size="mini"></el-input>
                     </el-form-item>
-                    <template v-if="this.isShowPwdInput">
-                        <el-form-item  label="密码：" :label-width="formLabelWidth" prop="pwd" >
-                            <el-input  type="password" v-model="addOrEditForm.pwd" autocomplete="off" :style="{width:this.addDialogInputWidth}" size="mini"></el-input>
+                    <div v-show="isShowObj.isShowPwd == true">
+                        <el-form-item  label="密码：" :label-width="formLabelWidth" prop="pwd">
+                            <el-input type="password" v-model="addOrEditForm.pwd" autocomplete="off" :style="{width:this.addDialogInputWidth}" size="mini"></el-input>
                         </el-form-item>
-                    </template>
+                    </div>
                     <el-form-item label="姓名：" :label-width="formLabelWidth" prop="realName">
                         <el-input v-model="addOrEditForm.realName" autocomplete="off" :style="{width:this.addDialogInputWidth}" size="mini"></el-input>
                     </el-form-item>
@@ -120,9 +120,9 @@
                         <el-select v-model="addOrEditForm.roleId" placeholder="请选择角色" size="mini" :style="{width:this.addDialogInputWidth}">
                             <el-option
                                     v-for="item in roleOptions"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -130,9 +130,9 @@
                         <el-select v-model="addOrEditForm.orgId" placeholder="请选择部门" size="mini" :style="{width:this.addDialogInputWidth}">
                             <el-option
                                     v-for="item in orgOptions"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -176,8 +176,7 @@
         name: "SystemUser",
         data(){
             var validateEmail = (rule, value, callback) => {
-                // eslint-disable-next-line no-debugger
-                debugger
+
                 if (value == undefined || value === '') {  //不进行必须校验
                     callback();
                 } else {
@@ -194,8 +193,8 @@
             return {
                 searchListForm:{},
                 addOrEditForm:{
-                    isonlineAccount:0,
-                    istelAccount:0
+                    isonlineAccount:"0",
+                    istelAccount:"0"
                 },
 
                 addOrEditFormRules:{
@@ -235,17 +234,10 @@
                 maxTableHeight:'',
                 tableHeight:'',
                 dialogFormVisible:false,
-                isShowPwdInput:true,
+                isShowObj:{"isShowPwd":true},
                 formLabelWidth:'150px',
-                roleOptions:[
-                    {label:'坐席',value:"604941576297380267"},
-                    {label:'demo01',value:"304121577066898548"}
-                ],
-                orgOptions:[
-                    {label:'售前',value:"816711576215371475"},
-                    {label:'售后',value:"622811576215381206"},
-                    {label:'customer service',value:"666131577067127529"}
-                ],
+                roleOptions:[],
+                orgOptions:[],
                 istelAccountOptions:[
                     {label:'电话坐席',value:"1"},
                     {label:'非电话坐席',value:"0"}
@@ -301,38 +293,55 @@
             },
             // 单条数据修改
             handleEditRow(row){
-                this.isShowPwdInput = false
+                console.log(row)
                 this.addOrEditForm = {
-                    "accountId":row.accountId,"name":row.name,"realName":row.realName,"wechatid":row.wechatid,
+                    "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
                     "tel":row.tel,"email":row.email,"roleId":row.roleId,"orgId":row.orgId,
                     "istelAccount":row.istelAccount,"isonlineAccount":row.isonlineAccount
                 }
+                this.$set(this.isShowObj,"isShowPwd",false)
+                // this.isDisabledPwdInput = true
+                this.openAddOrEditDialog()
 
-                console.log(row)
-                this.addOrEdit()
             },
             // 单条数据删除
             handleDeleteRow(row){
                 this.multipleSelection = row
-                let selected = row.date
+                let selected = row.id
                 this.deleteData(selected)
             },
+            // 弹窗内 ---> 确定按钮
             confirm(){
+
                 this.saveUserInfo()
+
                 this.dialogFormVisible = false
             },
             // 删除数据
             deleteData(selected){
-                alert("待删除的数据为:" + selected)
+                let _this = this
+                let param = {"ids":selected}
                 this.$confirm('确定是否进行删除操作, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning',
                     center: true
                 }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
+                    this.$axios.post("/user/deleteSysUser",param,{"baseURL":'csm-base-member'})
+                        .then(function (response) {
+                            console.log(response)
+                            let data = response.data
+                            if(data.flag == 1){
+                                _this.$message({
+                                    type: 'success',
+                                    message: '删除成功!'
+                                });
+                                _this.queryAll()
+                            }else{
+                                _this.$message.error(response.data.msg);
+                            }
+                        }).catch(function (error) {
+                        console.log(error);
                     });
                 }).catch(() => {
                     this.$message({
@@ -342,18 +351,50 @@
                 });
 
             },
-            addOrEdit(){
+            // 打开弹窗  --->对弹窗作前置条件处理
+            openAddOrEditDialog(){
                 let _this = this
-                //this.form = []
+                //查询 角色信息
+                this.$axios.post("/role/queryRoleListForSelect",null,{"baseURL":'csm-base-member'})
+                    .then(function (response) {
+                        console.log(response)
+                        let data = response.data
+                        if(data.flag == 1){
+                            _this.roleOptions = data.result
+                        }else{
+                            _this.$message.error(response.data.msg);
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
+                // 查询 组织机构信息
+                this.$axios.post("/organization/getOrganizationTree",null,{"baseURL":'csm-base-member'})
+                    .then(function (response) {
+                        console.log(response)
+                        let data = response.data
+                        if(data.flag == 1){
+                            _this.orgOptions = data.result
+                        }else{
+                            _this.$message.error(response.data.msg);
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
                 //设置宽度 form的宽度 + 'px'
-                _this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
-                //新增 显示密码框
-                this.isShowPwdInput = true
+                this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
                 //弹窗
                 this.dialogFormVisible = true
-
             },
-            //保存用户信息
+            // 新增 按钮
+            add(){
+                //重置表单
+                this.$set({},this.addOrEditForm)
+                //新增 显示密码框
+                this.$set(this.isShowObj,"isShowPwd",true)
+                //打开弹窗
+                this.openAddOrEditDialog()
+            },
+            //弹窗内 --->保存按钮
             saveUserInfo(){
                 let _this = this
                 this.$refs.addOrEditForm.validate((valid) => {
@@ -364,6 +405,7 @@
                             .then(function (response) {
                                 if(response.data.flag == 1){
                                     _this.$message.success("保存成功");
+                                    this.queryAll()
                                 }else{
                                     _this.$message.error(response.data.msg);
                                 }
@@ -379,11 +421,34 @@
             },
             //重置密码请求
             handleResetPwd(row){
-                console.log(row)
+                let _this = this
+                let parm = {"ids":row.id}
+                this.$confirm('确定是否进行密码重置操作, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    center: true
+                }).then(() => {
+                    this.$axios.post("/user/resetSysUserPwd",parm,{"baseURL":'csm-base-member'})
+                        .then(function (response) {
+                            if(response.data.flag == 1){
+                                _this.$message.success("重置成功！");
+                                this.queryAll()
+                            }else{
+                                _this.$message.error(response.data.msg);
+                            }
+                        }).catch(function (error) {
+                        console.log(error);
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消密码重置'
+                    });
+                });
             },
             //重置表单
             resetForm(formName){
-
                 this.$refs[formName].resetFields();
             },
             //分页

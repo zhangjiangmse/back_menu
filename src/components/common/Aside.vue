@@ -124,7 +124,7 @@
                     {
                         index:'7',
                         title:"自定义图标",
-                        name:'自定义图标',
+                        name:'Icon',
                         icon:'iconfont icon-smell',
                         component:'@/components/pages/Icon.vue',
                         path:'/home/pages/Icon',
@@ -134,7 +134,7 @@
                     {
                         index:'8',
                         title:"拖拽组件",
-                        name:'拖拽组件',
+                        name:'DragList',
                         icon:'el-icon-rank',
                         children: [
                             {
@@ -158,10 +158,28 @@
                             {
                                 index:'9-1',
                                 title:"系统用户",
-                                name:'系统用户',
+                                name:'SystemUser',
                                 icon:'el-icon-user',
                                 component:'@/components/pages/system/SystemUser.vue',
                                 path:'/home/pages/system-user',
+                                type:'local',
+                            }
+                        ]
+
+                    },
+                    {
+                        index:'10',
+                        title:"权限管理",
+                        name:'权限管理',
+                        icon:'el-icon-setting',
+                        children: [
+                            {
+                                index:'10-1',
+                                title:"角色管理",
+                                name:'RoleManage',
+                                icon:'el-icon-user',
+                                component:'@/components/pages/system/RoleManage.vue',
+                                path:'/home/pages/role-manage',
                                 type:'local',
                             }
                         ]
