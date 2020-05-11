@@ -4,7 +4,7 @@
             <Header></Header>
         </el-header>
         <el-container>
-            <Aside ref="aside"></Aside>
+            <Aside ref="aside" :style="{height:AsideHeight}" class="asideDiv"></Aside>
             <el-main style="padding: 0px">
                     <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable
                              @tab-remove="removeTab" @tab-click="clickTab">
@@ -58,6 +58,7 @@
                 isDisabledCloseRightBtnFlag:true,
                 left:'',
                 top:'',
+                AsideHeight:'',
                 reloadKey:0,
                 defaultActiveIndex:{"index":''},
                 conheight:{
@@ -92,8 +93,9 @@
        methods: {
             // 计算 Tab 的内容高度
            getHeight(){
-               let height = window.innerHeight-150
+               let height = window.innerHeight * 0.81
                this.conheight.height = height +'px';
+               this.AsideHeight =window.innerHeight * 0.9 + 'px';
                this.$store.commit("saveTabPanelHeight", height);
            },
            reload(title) {
@@ -301,10 +303,26 @@
         margin: 0;
         width: 99.4%;
     }
+    .asideDiv{
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
     .localTabDiv {
         width:99.4%;
         padding-top: 5px;
         padding-left: 10px;
         overflow-y: auto;
+    }
+    .el-tabs__item {
+        padding: 0 20px;
+        height: 30px;
+        box-sizing: border-box;
+        line-height: 30px;
+        display: inline-block;
+        list-style: none;
+        font-size: 14px;
+        font-weight: 500;
+        color: #303133;
+        position: relative;
     }
 </style>
