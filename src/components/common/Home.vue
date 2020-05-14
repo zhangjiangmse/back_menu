@@ -3,37 +3,42 @@
         <el-header style="background-color: #2c3e50;height: 60px;padding:0">
             <Header></Header>
         </el-header>
-        <el-container>
-            <Aside ref="aside" :style="{height:AsideHeight}" class="asideDiv"></Aside>
-            <el-main style="padding: 0px">
-                    <el-tabs v-model="editableTabsValue['active-tab']" type="card" closable
-                             @tab-remove="removeTab" @tab-click="clickTab">
-                        <el-tab-pane
-                                v-for="(item) in editableTabs"
-                                :key="item.name"
-                                :label="item.title"
-                                :name="item.title">
-                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv" :style="conheight"></div>
-                                    <div v-else class="localTabDiv" :style="conheight">
+        <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
+            <el-tabs type="border-card" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;">
+                <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.name"  :name="m_item.name">
+                    <el-container style="height: 100%;">
+                        <Aside ref="aside" class="asideDiv"></Aside>
+                        <el-main>
+                            <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
+                                     @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
+                                <el-tab-pane
+                                        v-for="(item) in editableTabs"
+                                        :key="item.name"
+                                        :label="item.title"
+                                        :name="item.title" style="height: 100%;">
+                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv"></div>
+                                    <div v-else class="localTabDiv">
                                         <keep-alive :include="keepAliveTagsList">
                                             <router-view></router-view>
                                         </keep-alive>
                                     </div>
-                        </el-tab-pane>
-                    </el-tabs>
-                <div v-show="contextMenuVisible">
-                    <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-                        <li><el-button type="text" @click="curTabReload()" size="mini">重新加载</el-button></li>
-                        <li><el-button type="text" @click="closeAllTabs()" size="mini">关闭所有</el-button></li>
-                        <li><el-button type="text" @click="closeOtherTabs('left')" :disabled="isDisabledCloseLeftBtnFlag" size="mini">关闭左边</el-button></li>
-                        <li><el-button type="text" @click="closeOtherTabs('right')" :disabled="isDisabledCloseRightBtnFlag" size="mini">关闭右边</el-button></li>
-                        <li><el-button type="text" @click="closeOtherTabs('other')" size="mini">关闭其他</el-button></li>
-                    </ul>
-                </div>
-            </el-main>
-        </el-container>
+                                </el-tab-pane>
+                            </el-tabs>
+                            <div v-show="contextMenuVisible">
+                                <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+                                    <li><el-button type="text" @click="curTabReload()" size="mini">重新加载</el-button></li>
+                                    <li><el-button type="text" @click="closeAllTabs()" size="mini">关闭所有</el-button></li>
+                                    <li><el-button type="text" @click="closeOtherTabs('left')" :disabled="isDisabledCloseLeftBtnFlag" size="mini">关闭左边</el-button></li>
+                                    <li><el-button type="text" @click="closeOtherTabs('right')" :disabled="isDisabledCloseRightBtnFlag" size="mini">关闭右边</el-button></li>
+                                    <li><el-button type="text" @click="closeOtherTabs('other')" size="mini">关闭其他</el-button></li>
+                                </ul>
+                            </div>
+                        </el-main>
+                    </el-container>
+                </el-tab-pane>
+            </el-tabs>
+        </el-main>
     </el-container>
-
 </template>
 <script>
     import Aside from './Aside.vue'
@@ -51,6 +56,9 @@
         },
         data() {
             return {
+                mainMenuTabs:[
+                    {id:'1',name:'系统管理'}
+                ],
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
                 contextMenuVisible:false,
@@ -58,23 +66,17 @@
                 isDisabledCloseRightBtnFlag:true,
                 left:'',
                 top:'',
-                AsideHeight:'',
                 reloadKey:0,
                 defaultActiveIndex:{"index":''},
-                conheight:{
-                    height:''
-                }
             };
         },
-        created() {
-            window.addEventListener('resize', this.getHeight);
-            this.getHeight()
+        created(){
+            // this.initMainMenu()
         },
         mounted() {
             // 使用原生js 为单个dom绑定鼠标右击事件
             let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-            tab_top_dom[0].oncontextmenu = this.openContextMenu
-
+            tab_top_dom[1].oncontextmenu = this.openContextMenu
         },
         computed:{
             keepAliveTagsList(){
@@ -91,12 +93,22 @@
             }
         },
        methods: {
-            // 计算 Tab 的内容高度
-           getHeight(){
-               let height = window.innerHeight * 0.81
-               this.conheight.height = height +'px';
-               this.AsideHeight =window.innerHeight * 0.9 + 'px';
-               this.$store.commit("saveTabPanelHeight", height);
+            //初始化主要菜单
+           initMainMenu(){
+               let _this = this
+               //处理保存信息请求
+               this.$axios.post("/role/saveSysRole",null,{"baseURL":'csm-base-member'})
+                   .then(function (response) {
+                       if(response.data.flag == 1){
+                           _this.$message.success("保存成功");
+                           _this.resetForm('addOrEditForm')
+                           _this.queryAll()
+                       }else{
+                           _this.$message.error(response.data.msg);
+                       }
+                   }).catch(function (error) {
+                   console.log(error);
+               });
            },
            reload(title) {
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
@@ -132,7 +144,7 @@
                        key = nextTab.key
                        keyPath = nextTab.keyPath
                    }
-                   this.$refs.aside.handleSelected(key,keyPath);
+                   this.$refs.aside[0].handleSelected(key,keyPath);
                }
                this.editableTabs.splice(targetIndex,1)
             },
@@ -150,9 +162,8 @@
                         break;
                     }
                 }
-                this.$refs.aside.handleSelected(key,keyPath);
+                this.$refs.aside[0].handleSelected(key,keyPath);
             },
-
             /*
             右击事件
              */
@@ -209,7 +220,7 @@
                this.$router.replace('/Home/pages/black')
 
                this.$nextTick(()=>{
-                   this.$refs.aside.handleSelected(key,keyPath);
+                   this.$refs.aside[0].handleSelected(key,keyPath);
                    this.$notify({
                        title: this.$t('message.tip'),
                        message: "刷新成功（如显示空白，请重试刷新！）",
@@ -222,7 +233,7 @@
                //删除所有tab标签
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中
-               this.$refs.aside.handleSelected("3",["3"]);
+               this.$refs.aside[0].handleSelected("3",["3"]);
                this.closeContextMenu()
            },
 
@@ -243,19 +254,19 @@
                    //删除左侧tab标签
                    this.editableTabs.splice(0,currTabIndex)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside.handleSelected(key,keyPath);
+                   this.$refs.aside[0].handleSelected(key,keyPath);
                }
                if (par == "right") {
                    //删除右侧tab标签
                    this.editableTabs.splice(currTabIndex,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside.handleSelected(key,keyPath);
+                   this.$refs.aside[0].handleSelected(key,keyPath);
                }
                if (par == "other") {
                    //删除所有tab标签
                    this.editableTabs.splice(0,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside.handleSelected(key,keyPath);
+                   this.$refs.aside[0].handleSelected(key,keyPath);
                }
                this.closeContextMenu()
            },
@@ -304,14 +315,17 @@
         width: 99.4%;
     }
     .asideDiv{
+        max-height: 660px;
         overflow-y: auto;
         overflow-x: hidden;
     }
     .localTabDiv {
+        height: 98%;
         width:99.4%;
         padding-top: 5px;
         padding-left: 10px;
         overflow-y: auto;
+
     }
     .el-tabs__item {
         padding: 0 20px;
@@ -324,5 +338,34 @@
         font-weight: 500;
         color: #303133;
         position: relative;
+    }
+    .el-tabs--border-card>.el-tabs__content {
+        padding: 0px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        width: 100%;
+        top: 29px;
+        bottom: 0px;
+
+    }
+    #innerTab .el-tabs__content{
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+    .el-main {
+        display: block;
+        flex: 1;
+        flex-basis: auto;
+        overflow: auto;
+        box-sizing: border-box;
+        padding: 0px;
+    }
+    .el-tab-pane {
+        position: absolute;
+        width: 100%;
+        top: 0px;
+        bottom: 0px;
     }
 </style>

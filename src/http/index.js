@@ -18,8 +18,7 @@ const url = {
 };
 
 //添加请求拦截器
-axios.interceptors.request.use(
-    config => {
+axios.interceptors.request.use(config =>{
         let token = localStorage.getItem("token");
         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.token = `${token}`;

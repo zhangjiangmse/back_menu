@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <el-row >
+    <div class="singlePage">
+        <el-row>
             <el-form :inline="true" :model="searchListForm" class="demo-form-inline" size="mini">
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item>
@@ -32,21 +32,16 @@
                         <el-input v-model="searchListForm.roleName" placeholder="请输入角色类型" clearable></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :xs="8" :sm="4" :md="4" :lg="3" :xl="3">
-                    <el-form-item>
-                        <el-button type="primary" @click="queryAll" icon="el-icon-search">查询</el-button>
-                    </el-form-item>
-                </el-col>
             </el-form>
         </el-row>
-        <el-row style="background-color: #efefef">
-            <el-button type="success" plain @click="add" icon="el-icon-plus" size="mini" style="border: 0">新增</el-button>
-            <el-button type="success" plain @click="onSubmit" icon="el-icon-refresh" size="mini" style="border: 0">同步呼叫中心用户</el-button>
-        </el-row>
         <el-row>
-            <el-table :data="tableData" border style="width: 100%;" size="mini"
-                      :default-sort="{prop:'createTime',order:'descending'}"
-                      :max-height="maxTableHeight" :height="tableHeight"
+            <el-button type="primary" @click="queryAll" icon="el-icon-search" size="mini">查询</el-button>
+            <el-button type="primary" @click="add" icon="el-icon-plus" size="mini" >新增</el-button>
+            <el-button type="primary" @click="onSubmit" icon="el-icon-refresh" size="mini">同步呼叫中心用户</el-button>
+        </el-row>
+        <el-row class="row-table">
+            <el-table :data="tableData" border class="table-1" size="mini"
+                      :default-sort="{prop:'createTime',order:'descending'}" height="100%"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
             >
@@ -231,8 +226,6 @@
                 currentPage:1,
                 pageSize:10,
                 totalData:0,
-                maxTableHeight:'',
-                tableHeight:'',
                 dialogFormVisible:false,
                 isShowObj:{"isShowPwd":true},
                 formLabelWidth:'150px',
@@ -262,7 +255,7 @@
                 let init_maxTableHeight = this.$store.getters.tabPanelHeight
                 this.maxTableHeight = init_maxTableHeight
                 //设定Table的高度
-                this.tableHeight = init_maxTableHeight * 0.79
+                this.tableHeight = init_maxTableHeight * 0.798
             },
             onSubmit(){
 
@@ -293,7 +286,7 @@
             },
             // 单条数据修改
             handleEditRow(row){
-                console.log(row)
+
                 this.addOrEditForm = {
                     "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
                     "tel":row.tel,"email":row.email,"roleId":row.roleId,"orgId":row.orgId,
@@ -306,7 +299,6 @@
             },
             // 单条数据删除
             handleDeleteRow(row){
-                this.multipleSelection = row
                 let selected = row.id
                 this.deleteData(selected)
             },
@@ -471,5 +463,29 @@
         color: #606266;
         font-size: 14px;
         word-break: break-all;
+    }
+    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+        margin-bottom: 10px;
+    }
+    .singlePage{
+        width: 99.5%;
+        height: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+    }
+    .row-table{
+        top: 0px;
+        bottom:100px;
+        height: calc(100% - 150px);
+        box-sizing: border-box;
+    }
+    .table-1{
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        bottom: 0px;
+
     }
 </style>

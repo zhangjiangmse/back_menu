@@ -4,7 +4,7 @@
              @select="handleSelected"
              @open="handleOpen"
              @close="handleClose"
-             :collapse="collapse">
+             :collapse="collapse" :unique-opened="true">
         <template v-for="item in aside_list">
             <template v-if="item.children">
                 <el-submenu :index="item.index" :key="item.index">
@@ -181,9 +181,17 @@
                                 component:'@/components/pages/system/RoleManage.vue',
                                 path:'/home/pages/role-manage',
                                 type:'local',
+                            },
+                            {
+                                index:'10-2',
+                                title:"组织机构",
+                                name:'OrganizationManage',
+                                icon:'iconfont icon-organization',
+                                component:'@/components/pages/system/OrganizationManage.vue',
+                                path:'/home/pages/organization-manage',
+                                type:'local',
                             }
                         ]
-
                     },
                     {
                         index:'30',

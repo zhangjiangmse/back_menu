@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div  class="singlePage">
         <el-row >
             <el-form :inline="true" :model="searchListForm" class="demo-form-inline" size="mini">
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
@@ -17,20 +17,16 @@
                         </el-option>
                     </el-select>
                 </el-col>
-                <el-col :xs="8" :sm="4" :md="4" :lg="3" :xl="3">
-                    <el-form-item>
-                        <el-button type="primary" @click="queryAll" icon="el-icon-search">查询</el-button>
-                    </el-form-item>
-                </el-col>
             </el-form>
         </el-row>
-        <el-row style="background-color: #efefef">
-            <el-button type="success" plain @click="add" icon="el-icon-plus" size="mini" style="border: 0">新增</el-button>
-        </el-row>
         <el-row>
-            <el-table :data="tableData" border style="width: 100%;" size="mini"
+            <el-button type="primary" @click="queryAll" icon="el-icon-search" size="mini">查询</el-button>
+            <el-button type="primary" @click="add" icon="el-icon-plus"  size="mini">新增</el-button>
+        </el-row>
+        <el-row  class="row-table">
+            <el-table :data="tableData" border style="width: 100%;" size="mini" class="table-1"
                       :default-sort="{prop:'createTime',order:'descending'}"
-                      :max-height="maxTableHeight" :height="tableHeight"
+                      height="100%"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
             >
@@ -67,18 +63,16 @@
 
             </el-table>
         </el-row>
-        <el-row>
-            <el-row style="text-align: right;margin: 10px">
-                <el-pagination
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50]"
-                        :page-size="pageSize"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="totalData">
-                </el-pagination>
-            </el-row>
+        <el-row style="text-align: right;margin: 10px">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 50]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="totalData">
+            </el-pagination>
         </el-row>
         <!-- 新增弹框-->
         <el-dialog title="新增角色" :visible.sync="dialogFormVisible" ref="addOrEditDialog">
@@ -143,8 +137,6 @@ export default {
             currentPage:1,
             pageSize:10,
             totalData:0,
-            maxTableHeight:'',
-            tableHeight:'',
             dialogFormVisible:false,
             formLabelWidth:'150px',
             menuOptions:[],
@@ -153,7 +145,7 @@ export default {
         }
     },
     created(){
-        this.initTableAttr();
+
         this.queryAll();
     },
     computed :{
@@ -162,12 +154,7 @@ export default {
         }
     },
     methods:{
-        initTableAttr(){
-            let init_maxTableHeight = this.$store.getters.tabPanelHeight
-            this.maxTableHeight = init_maxTableHeight
-            //设定Table的高度
-            this.tableHeight = init_maxTableHeight * 0.79
-        },
+
         onSubmit(){
 
         },
@@ -209,6 +196,7 @@ export default {
                     let menuId_Cascader = []
                     if(data.flag == 1){
                         _this.menuOptions = data.result
+                        // 构造级联面板的选中参数
                         for(let i = 0 ;i < _this.menuOptions.length; ++i){
                             // eslint-disable-next-line no-debugger
                             // debugger
@@ -304,7 +292,7 @@ export default {
         },
         // 单条数据删除
         handleDeleteRow(row){
-            this.multipleSelection = row
+
             let selected = row.id
             this.deleteData(selected)
         },
@@ -323,9 +311,8 @@ export default {
                 type: 'warning',
                 center: true
             }).then(() => {
-                this.$axios.post("/user/deleteSysUser",param,{"baseURL":'csm-base-member'})
+                this.$axios.post("/role/deleteSysRole",param,{"baseURL":'csm-base-member'})
                     .then(function (response) {
-                        console.log(response)
                         let data = response.data
                         if(data.flag == 1){
                             _this.$message({
@@ -347,29 +334,27 @@ export default {
             });
         },
         // 打开弹窗  --->对弹窗作前置条件处理
-        openAddOrEditDialog(){
+        async openAddOrEditDialog() {
             let _this = this
             //查询 角色菜单
-            if(_this.menuOptions == null){
-                let param = {"showTop":false}
-                this.$axios.post("/menu/getAllMenuTree",param,{"baseURL":'csm-base-member'})
+            if (_this.menuOptions == null || _this.menuOptions.length == 0) {
+                let param = {"showTop": false}
+                await this.$axios.post("/menu/getAllMenuTree", param, {"baseURL": 'csm-base-member'})
                     .then(function (response) {
                         let data = response.data
-                        if(data.flag == 1){
+                        if (data.flag == 1) {
                             _this.menuOptions = data.result
-                        }else{
+                        } else {
                             _this.$message.error(response.data.msg);
                         }
                     }).catch(function (error) {
-                    console.log(error);
-                });
+                        console.log(error);
+                    });
             }
-            setTimeout(()=>{
-                //设置宽度 form的宽度 + 'px'
-                this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
-                //弹窗
-                this.dialogFormVisible = true
-            },1)
+            //设置宽度 form的宽度 + 'px'
+            this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
+            //弹窗
+            this.dialogFormVisible = true
         },
         // 新增 按钮
         add(){
@@ -456,5 +441,29 @@ export default {
         color: #606266;
         font-size: 14px;
         word-break: break-all;
+    }
+    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+        margin-bottom: 10px;
+    }
+    .singlePage{
+        width: 99.7%;
+        height: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+    }
+    .row-table{
+        top: 0px;
+        bottom:100px;
+        height: calc(100% - 150px);
+        box-sizing: border-box;
+    }
+    .table-1{
+        height: 100%;
+        width: 100%;
+        top: 0px;
+        bottom: 0px;
+
     }
 </style>

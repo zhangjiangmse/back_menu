@@ -42,9 +42,10 @@
             </div>
         </el-col>
         <el-col :xs="14" :sm="7" :md="6" :lg="5" :xl="5">
+            <!-- 用户头像 -->
             <el-col :xs="16" :sm="16" :md="16" :lg="12" :xl="12">
                 <div class="user-avator" style="float: left">
-                    <img src="../../assets/img/img.jpg" />
+                    <!--<img src="../../assets/img/img.jpg" />-->
                 </div>
                 <div style="float: left">
                     <!-- 用户名下拉菜单 -->
@@ -62,20 +63,20 @@
                     </el-dropdown>
                 </div>
             </el-col>
-            <!-- 用户头像 -->
-            <el-col :xs="8" :sm="8" :md="8" :lg="12" :xl="12">
-                <!-- 语言下拉菜单 -->
-                <el-dropdown class="user-name" trigger="click" @command="handleCommand_lang" style="float: left" size="mini">
-                        <span class="el-dropdown-link">
-                           {{currentLanguage}}
-                            <i class="el-icon-caret-bottom"></i>
-                        </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="cn">{{$t('message.cn')}}</el-dropdown-item>
-                        <el-dropdown-item divided command="en">{{$t('message.en')}}</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </el-col>
+
+<!--            <el-col :xs="8" :sm="8" :md="8" :lg="12" :xl="12">-->
+<!--                &lt;!&ndash; 语言下拉菜单 &ndash;&gt;-->
+<!--                <el-dropdown class="user-name" trigger="click" @command="handleCommand_lang" style="float: left" size="mini">-->
+<!--                        <span class="el-dropdown-link">-->
+<!--                           {{currentLanguage}}-->
+<!--                            <i class="el-icon-caret-bottom"></i>-->
+<!--                        </span>-->
+<!--                    <el-dropdown-menu slot="dropdown">-->
+<!--                        <el-dropdown-item command="cn">{{$t('message.cn')}}</el-dropdown-item>-->
+<!--                        <el-dropdown-item divided command="en">{{$t('message.en')}}</el-dropdown-item>-->
+<!--                    </el-dropdown-menu>-->
+<!--                </el-dropdown>-->
+<!--            </el-col>-->
         </el-col>
     </el-row>
 </template>

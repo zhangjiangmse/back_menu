@@ -65,6 +65,11 @@ const routes = [
                 name:'RoleManage',
                 path:'/home/pages/role-manage',
                 component:() => import('@/components/pages/system/RoleManage.vue')
+            },
+            {
+                name:'OrganizationManage',
+                path:'/home/pages/organization-manage',
+                component:() => import('@/components/pages/system/OrganizationManage.vue')
             }
         ]
     },

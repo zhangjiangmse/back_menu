@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="singlePage">
         <el-row  style="margin-bottom: 10px">
             <el-col :xs="10" :sm="4" :md="4" :lg="3" :xl="3" class="el_row_condition">
                 <el-input v-model="nameValue" placeholder="请输入姓名"  size="mini"></el-input>
@@ -22,10 +22,10 @@
                 <el-button type="primary" size="mini" icon="el-icon-refresh" @click="cur_reload" >刷新</el-button>
             </el-col>
         </el-row>
-        <el-row class="el_row_table">
-            <el-table :data="tableData" border style="width: 100%;" size="mini"
+        <el-row class="el_row_table" style="top: 0px;bottom:100px;height: calc(100% - 140px);box-sizing: border-box">
+            <el-table :data="tableData" border style="width: 100%;top: 0px;bottom: 0px;height: 100%" size="mini"
                       :default-sort="{prop:'date',order:'descending'}"
-                      :max-height="maxTableHeight" :height="tableHeight" @selection-change="handleSelectionChange"
+                      height="100%" @selection-change="handleSelectionChange" @select="handleSelectRow"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
             >
@@ -56,7 +56,7 @@
                 </el-table-column>
             </el-table>
         </el-row>
-        <el-row style="text-align: right;margin: 10px">
+        <el-row style="text-align: right;margin: 10px;">
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -111,8 +111,7 @@
                 currentPage:1,
                 pageSize:10,
                 totalData:'',
-                maxTableHeight:'',
-                tableHeight:'',
+                tableHeight:'500px',
                 multipleSelection:'',
                 dialogFormVisible:false,
                 formLabelWidth:"300",
@@ -335,16 +334,9 @@
             };
         },
         created(){
-            this.initTableAttr();
             this.queryAll();
         },
         methods:{
-            initTableAttr(){
-                let init_maxTableHeight = this.$store.getters.tabPanelHeight
-                this.maxTableHeight = init_maxTableHeight
-                //设定Table的高度
-                this.tableHeight = init_maxTableHeight * 0.85
-            },
             cur_reload(){
                 let title = this.TabName
                 this.reload(title)
@@ -477,7 +469,9 @@
                 });
 
             },
-
+            handleSelectRow(selection, row){
+                console.log(selection, row)
+            },
             //分页
             handleSizeChange(pageSize){
                 this.pageSize = pageSize
@@ -501,5 +495,12 @@
     .el_row_condition div{
         margin:0 3px;
     }
-
+    .singlePage{
+        width: 99.7%;
+        height: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+    }
 </style>
