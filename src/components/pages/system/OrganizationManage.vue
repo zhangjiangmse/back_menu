@@ -47,17 +47,6 @@
 
             </el-table>
         </el-row>
-        <el-row style="text-align: right;margin: 10px">
-            <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[10, 20, 50]"
-                    :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="totalData">
-            </el-pagination>
-        </el-row>
         <!-- 新增弹框-->
         <el-dialog title="新增组织机构" :visible.sync="dialogFormVisible" ref="addOrEditDialog">
             <el-row>
@@ -87,7 +76,6 @@
 </template>
 
 <script>
-
 
     export default {
         name: "OrganizationManage",
@@ -411,16 +399,6 @@
             resetForm(formName){
                 this.$refs[formName].resetFields();
             },
-            //分页
-            handleSizeChange(pageSize){
-                this.pageSize = pageSize
-                this.currentPage = 1
-                this.queryData()
-            },
-            handleCurrentChange(curPage){
-                this.currentPage = curPage
-                this.queryData()
-            },
         }
     }
 </script>
@@ -445,8 +423,8 @@
     }
     .row-table{
         top: 0px;
-        bottom:100px;
-        height: calc(100% - 150px);
+        bottom:0px;
+        height: calc(100% - 70px);
         box-sizing: border-box;
     }
     .table-1{

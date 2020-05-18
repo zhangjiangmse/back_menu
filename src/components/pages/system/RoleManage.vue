@@ -187,7 +187,7 @@ export default {
         handleEditRow(row){
             console.log(row)
             let _this = this
-            let param = {"showTop":false}
+            let param = {"showTop":true}
 
             let menuId_index = row.menuIds.split(",").length
             this.$axios.post("/menu/getAllMenuTree",param,{"baseURL":'csm-base-member'})
@@ -198,8 +198,7 @@ export default {
                         _this.menuOptions = data.result
                         // 构造级联面板的选中参数
                         for(let i = 0 ;i < _this.menuOptions.length; ++i){
-                            // eslint-disable-next-line no-debugger
-                            // debugger
+
                             let route = []
                             let c1 = _this.menuOptions[i].children
                             route.push(_this.menuOptions[i].id)
@@ -338,7 +337,7 @@ export default {
             let _this = this
             //查询 角色菜单
             if (_this.menuOptions == null || _this.menuOptions.length == 0) {
-                let param = {"showTop": false}
+                let param = {"showTop": true}
                 await this.$axios.post("/menu/getAllMenuTree", param, {"baseURL": 'csm-base-member'})
                     .then(function (response) {
                         let data = response.data

@@ -70,6 +70,11 @@ const routes = [
                 name:'OrganizationManage',
                 path:'/home/pages/organization-manage',
                 component:() => import('@/components/pages/system/OrganizationManage.vue')
+            },
+            {
+                name:'MenuManage',
+                path:'/home/pages/menu-manage',
+                component:() => import('@/components/pages/system/MenuManage.vue')
             }
         ]
     },

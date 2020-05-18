@@ -7,7 +7,7 @@ import qs from 'qs';
  3、序列化字符串
  */
 //配置响应时间
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 20000;
 //配置前后端数据交互的请求头：
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // 设置后台的访问地址

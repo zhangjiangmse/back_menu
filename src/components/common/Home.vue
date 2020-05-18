@@ -4,10 +4,10 @@
             <Header></Header>
         </el-header>
         <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
-            <el-tabs type="border-card" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;">
-                <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.name"  :name="m_item.name">
+            <el-tabs type="border-card" v-model="MainTabsValue['active-tab']" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;" @tab-click="clickMainTab">
+                <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.title"  :name="m_item.title">
                     <el-container style="height: 100%;">
-                        <Aside ref="aside" class="asideDiv"></Aside>
+                        <Aside ref="aside" class="asideDiv" :aside_list="aside_list"></Aside>
                         <el-main>
                             <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
                                      @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
@@ -16,7 +16,7 @@
                                         :key="item.name"
                                         :label="item.title"
                                         :name="item.title" style="height: 100%;">
-                                    <div v-if="item.type == 'remote'" v-html="item.content" class="remoteTabDiv"></div>
+                                    <div v-if="item.menuorigin == 'remote'" v-html="item.content" class="remoteTabDiv"></div>
                                     <div v-else class="localTabDiv">
                                         <keep-alive :include="keepAliveTagsList">
                                             <router-view></router-view>
@@ -56,9 +56,9 @@
         },
         data() {
             return {
-                mainMenuTabs:[
-                    {id:'1',name:'系统管理'}
-                ],
+                mainMenuTabs:[],
+                MainTabsValue:{"active-tab":''},
+                aside_list:[],
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
                 contextMenuVisible:false,
@@ -71,13 +71,16 @@
             };
         },
         created(){
-            // this.initMainMenu()
+             this.initMainMenu()
+
         },
-        mounted() {
-            // 使用原生js 为单个dom绑定鼠标右击事件
-            let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-            tab_top_dom[1].oncontextmenu = this.openContextMenu
-        },
+        // mounted() {
+        //     // eslint-disable-next-line no-debugger
+        //     debugger
+        //     // 使用原生js 为单个dom绑定鼠标右击事件
+        //     let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
+        //     tab_top_dom[1].oncontextmenu = this.openContextMenu
+        // },
         computed:{
             keepAliveTagsList(){
                 return this.$store.getters.keepAliveTagsList
@@ -97,18 +100,42 @@
            initMainMenu(){
                let _this = this
                //处理保存信息请求
-               this.$axios.post("/role/saveSysRole",null,{"baseURL":'csm-base-member'})
-                   .then(function (response) {
-                       if(response.data.flag == 1){
-                           _this.$message.success("保存成功");
-                           _this.resetForm('addOrEditForm')
-                           _this.queryAll()
-                       }else{
-                           _this.$message.error(response.data.msg);
-                       }
-                   }).catch(function (error) {
-                   console.log(error);
-               });
+
+               if(_this.mainMenuTabs.length <= 1){
+
+                   this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
+                       .then(function (response) {
+                           if(response.data.flag == 1){
+
+                                _this.mainMenuTabs = response.data.result[0].children
+                           }else{
+                               _this.$message.error(response.data.msg);
+                           }
+                       }).catch(function (error) {
+                       console.log(error);
+                   });
+               }
+
+           },
+           bindRightClickMenu(){
+
+               // 使用原生js 为单个dom绑定鼠标右击事件
+               let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
+               for(let i = 1;i<tab_top_dom.length;++i){
+                   tab_top_dom[i].oncontextmenu = this.openContextMenu
+               }
+
+           },
+           // 点击最上方的菜单栏时的响应,为aside添加新的菜单
+           clickMainTab(tab){
+               let _this = this
+               for(let i = 0 ;i <_this.mainMenuTabs.length;++i){
+                   if(_this.mainMenuTabs[i].title == tab.name){
+                       _this.aside_list = _this.mainMenuTabs[i].children
+                       break
+                   }
+               }
+               _this.bindRightClickMenu()
            },
            reload(title) {
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
@@ -144,26 +171,93 @@
                        key = nextTab.key
                        keyPath = nextTab.keyPath
                    }
-                   this.$refs.aside[0].handleSelected(key,keyPath);
+                   //调用子组件的方法，设置默认选中
+                   //查找主Tab的名称
+                   let childrenNode = this.mainMenuTabs.concat()
+                   let tempData = {"id": 0, title: '', children: childrenNode}
+                   let array = []
+                   let searchResult = {flag: false}
+
+                   this.searchMainTabName(tempData, nextTab.title, array, searchResult)
+
+                   // 查找当前的主菜单栏对应的左侧菜单栏
+                   let asideIndex = 0
+                   for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
+                       if(this.mainMenuTabs[asideIndex].title == array[1]){
+                           break
+                       }
+                   }
+                   // eslint-disable-next-line no-debugger
+                   debugger
+                   this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
+                   // this.$refs.aside[0].handleSelected(key,keyPath);
                }
                this.editableTabs.splice(targetIndex,1)
             },
            /*
            点击当前页
             */
-            clickTab( tab){
+           clickTab(tab) {
+               let _this = this
+               // eslint-disable-next-line no-debugger
+               debugger
+                //查找主Tab的名称
+                let childrenNode = _this.mainMenuTabs.concat()
+                let tempData = {"id": 0, title: '', children: childrenNode}
+                let array = []
+                let searchResult = {flag: false}
 
+                this.searchMainTabName(tempData, tab.name, array, searchResult)
+                //激活当前页所在的主Tab页
+                this.$set(_this.MainTabsValue, 'active-tab', array[1])
+                this.clickMainTab({name: array[1]})
+                //选中当前页所在的左侧菜单栏的
                 let key = ''
                 let keyPath = ''
-                for(let i = 0;i<this.editableTabs.length;++i){
-                    if(this.editableTabs[i].title == tab.name){
-                        key = this.editableTabs[i].key;
-                        keyPath = this.editableTabs[i].keyPath;
+
+                for (let i = 0; i <  _this.editableTabs.length; ++i) {
+                    if ( _this.editableTabs[i].title == tab.name) {
+                        key =  _this.editableTabs[i].key;
+                        keyPath =  _this.editableTabs[i].keyPath;
                         break;
                     }
                 }
-                this.$refs.aside[0].handleSelected(key,keyPath);
+               // 查找当前的主菜单栏对应的左侧菜单栏
+                let asideIndex = 0
+                for(;asideIndex<_this.mainMenuTabs.length;++asideIndex){
+                    if(_this.mainMenuTabs[asideIndex].title == array[1]){
+                        break
+                    }
+                }
+               _this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,_this.mainMenuTabs[asideIndex].children);
+
             },
+           // 通过子节点找到祖宗节点
+           searchMainTabName(root,target,array,searchResult){
+                let _this = this
+                if(searchResult.flag){
+                    return
+                }
+                if(root.title == target){
+                    array.push(root.title)
+                    this.$set(searchResult,'flag',true)
+                    return;
+                }else{
+                    array.push(root.title)
+                    let children = root.children
+                    if(children!= undefined && children != null) {
+                        children.forEach(item => {
+                            _this.searchMainTabName(item, target, array, searchResult)
+                        })
+                        if (!searchResult.flag) {
+                            array.pop()
+                        }
+                    }else{
+                        array.pop()
+                        return;
+                    }
+                }
+           },
             /*
             右击事件
              */
@@ -193,8 +287,9 @@
                    }
                    this.contextMenuVisible = true;
                    this.$store.commit("saveCurContextTabId", currentContextTabId);
+
                    this.left = e.clientX;
-                   this.top = e.clientY + 10;
+                   this.top = 20;
                }
            },
            /*
@@ -220,7 +315,23 @@
                this.$router.replace('/Home/pages/black')
 
                this.$nextTick(()=>{
-                   this.$refs.aside[0].handleSelected(key,keyPath);
+                   //查找主Tab的名称
+                   let childrenNode = this.mainMenuTabs.concat()
+                   let tempData = {"id": 0, title: '', children: childrenNode}
+                   let array = []
+                   let searchResult = {flag: false}
+
+                   this.searchMainTabName(tempData, this.editableTabs[currTabIndex].title, array, searchResult)
+
+                   // 查找当前的主菜单栏对应的左侧菜单栏
+                   let asideIndex = 0
+                   for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
+                       if(this.mainMenuTabs[asideIndex].title == array[1]){
+                           break
+                       }
+                   }
+                   this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
+
                    this.$notify({
                        title: this.$t('message.tip'),
                        message: "刷新成功（如显示空白，请重试刷新！）",
@@ -230,15 +341,18 @@
            },
            // 关闭所有标签页
            closeAllTabs() {
+               // eslint-disable-next-line no-debugger
+               debugger
                //删除所有tab标签
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中
-               this.$refs.aside[0].handleSelected("3",["3"]);
+               // this.$refs.aside[0].handleSelected("3",["3"]);
                this.closeContextMenu()
            },
 
            // 关闭其它标签页
            closeOtherTabs(par) {
+
                let currTabIndex = 0;
                for(;currTabIndex<this.editableTabs.length;++currTabIndex){
                    if(this.editableTabs[currTabIndex].title == this.$store.state.curContextTabId){
@@ -248,26 +362,47 @@
 
                let key = this.editableTabs[currTabIndex].key;
                let keyPath = this.editableTabs[currTabIndex].keyPath
-              // let curTab = this.editableTabs[currTabIndex]
+               let curTab = this.editableTabs[currTabIndex]
                console.log(currTabIndex)
                if (par == "left") {
                    //删除左侧tab标签
                    this.editableTabs.splice(0,currTabIndex)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside[0].handleSelected(key,keyPath);
+                   // this.$refs.aside[0].handleSelected(key,keyPath);
                }
                if (par == "right") {
                    //删除右侧tab标签
                    this.editableTabs.splice(currTabIndex,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside[0].handleSelected(key,keyPath);
+                   // this.$refs.aside[0].handleSelected(key,keyPath);
                }
                if (par == "other") {
                    //删除所有tab标签
                    this.editableTabs.splice(0,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
-                   this.$refs.aside[0].handleSelected(key,keyPath);
+                  // this.$refs.aside[0].handleSelected(key,keyPath);
                }
+
+               //调用子组件的方法，设置默认选中
+               //查找主Tab的名称
+               let childrenNode = this.mainMenuTabs.concat()
+               let tempData = {"id": 0, title: '', children: childrenNode}
+               let array = []
+               let searchResult = {flag: false}
+
+               this.searchMainTabName(tempData, curTab.title, array, searchResult)
+               //激活当前页所在的主Tab页
+               this.$set(this.MainTabsValue, 'active-tab', array[1])
+               this.clickMainTab({name: array[1]})
+
+               // 查找当前的主菜单栏对应的左侧菜单栏
+               let asideIndex = 0
+               for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
+                   if(this.mainMenuTabs[asideIndex].title == array[1]){
+                       break
+                   }
+               }
+               this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
                this.closeContextMenu()
            },
            // 关闭contextMenu
@@ -311,6 +446,7 @@
        color: #2c3e50;
     }
     .remoteTabDiv {
+        height: 98%;
         margin: 0;
         width: 99.4%;
     }

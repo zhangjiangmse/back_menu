@@ -1,5 +1,5 @@
 <template>
-    <el-menu :default-active="defaultActiveIndex" collapse-transition
+    <el-menu :default-active="defaultActiveIndex['active']" collapse-transition
              class="el-menu-vertical-demo"
              @select="handleSelected"
              @open="handleOpen"
@@ -50,159 +50,170 @@
     import bus from './bus';
 
     export default {
-
+        props:{
+            aside_list: Array,
+        },
         data() {
             return {
                 collapse: false,
-                default_active_index:'',
-                aside_list:[
-                    {
-                        index:'1',
-                        title:"系统首页",
-                        icon:"el-icon-location",
-                        children: [
-                            {
-                                index:'1-1',
-                                title:"ElementUI",
-                                icon:"el-icon-eleme",
-                                path:'https://element.eleme.cn/#/zh-CN/component/installation',
-                                type:'remote',
-                                children: [
-                                    {
-                                        index:'1-1-1',
-                                        title:"ElementUI官网",
-                                        icon:"el-icon-eleme",
-                                        path:'https://element.eleme.cn/#/zh-CN/component/installation',
-                                        type:'remote'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        index:'2',
-                        title:"百度搜索",
-                        name:'baidu',
-                        icon:'iconfont icon-baidu',
-                        path:'http://www.baidu.com',
-                        type:'remote'
-                    },
-                    {
-                        index:'3',
-                        title:"本地页面",
-                        name:'HelloWorld',
-                        component:'@/components/HelloWorld.vue',
-                        path:'/home/pages/helloWorld',
-                        type:'local'
-                    },
-                    {
-                        index:'4',
-                        title:"基础表格",
-                        name:'BaseTable',
-                        component:'@/components/pages/BaseTable.vue',
-                        path:'/home/pages/base-table',
-                        icon:'el-icon-setting',
-                        type:'local'
-                    },
-                    {
-                        index:'5',
-                        title:"设置页面",
-                        name:'SettingInfo',
-                        component:'@/components/pages/SettingInfo.vue',
-                        path:'/home/pages/settingInfo',
-                        icon:'el-icon-setting',
-                        type:'local'
-                    },
-                    {
-                        index:'6',
-                        title:"403",
-                        name:'403',
-                        component:'@/components/pages/403.vue',
-                        path:'/home/pages/403',
-                        type:'local'
-                    },
-                    {
-                        index:'7',
-                        title:"自定义图标",
-                        name:'Icon',
-                        icon:'iconfont icon-smell',
-                        component:'@/components/pages/Icon.vue',
-                        path:'/home/pages/Icon',
-                        type:'local'
-
-                    },
-                    {
-                        index:'8',
-                        title:"拖拽组件",
-                        name:'DragList',
-                        icon:'el-icon-rank',
-                        children: [
-                            {
-                                index:'8-1',
-                                title:"拖拽列表",
-                                name:'拖拽列表',
-                                icon:'',
-                                component:'@/components/pages/DragList.vue',
-                                path:'/home/pages/DragList',
-                                type:'local',
-                            }
-                        ]
-
-                    },
-                    {
-                        index:'9',
-                        title:"用户管理",
-                        name:'用户管理',
-                        icon:'el-icon-setting',
-                        children: [
-                            {
-                                index:'9-1',
-                                title:"系统用户",
-                                name:'SystemUser',
-                                icon:'el-icon-user',
-                                component:'@/components/pages/system/SystemUser.vue',
-                                path:'/home/pages/system-user',
-                                type:'local',
-                            }
-                        ]
-
-                    },
-                    {
-                        index:'10',
-                        title:"权限管理",
-                        name:'权限管理',
-                        icon:'el-icon-setting',
-                        children: [
-                            {
-                                index:'10-1',
-                                title:"角色管理",
-                                name:'RoleManage',
-                                icon:'el-icon-user',
-                                component:'@/components/pages/system/RoleManage.vue',
-                                path:'/home/pages/role-manage',
-                                type:'local',
-                            },
-                            {
-                                index:'10-2',
-                                title:"组织机构",
-                                name:'OrganizationManage',
-                                icon:'iconfont icon-organization',
-                                component:'@/components/pages/system/OrganizationManage.vue',
-                                path:'/home/pages/organization-manage',
-                                type:'local',
-                            }
-                        ]
-                    },
-                    {
-                        index:'30',
-                        title:"支持作者",
-                        name:'Donate',
-                        icon:"iconfont icon-redpacket_fill",
-                        component:'@/components/pages/Donate.vue',
-                        path:'/home/pages/Donate',
-                        type:'local'
-                    }
-                ]
+                default_active_index:{'active':''},
+                // aside_list:[
+                //     {
+                //         index:'SystemHome',
+                //         title:"系统首页",
+                //         icon:"el-icon-location",
+                //         children: [
+                //             {
+                //                 index:'ElementUI',
+                //                 title:"ElementUI",
+                //                 icon:"el-icon-eleme",
+                //                 path:'https://element.eleme.cn/#/zh-CN/component/installation',
+                //                 menuorigin:'remote',
+                //                 children: [
+                //                     {
+                //                         index:'ElementUI官网',
+                //                         title:"ElementUI官网",
+                //                         icon:"el-icon-eleme",
+                //                         path:'https://element.eleme.cn/#/zh-CN/component/installation',
+                //                         menuorigin:'remote'
+                //                     }
+                //                 ]
+                //             }
+                //         ]
+                //     },
+                //     {
+                //         index:'baidu',
+                //         title:"百度搜索",
+                //         name:'baidu',
+                //         icon:'iconfont icon-baidu',
+                //         path:'http://www.baidu.com',
+                //         menuorigin:'remote'
+                //     },
+                //     {
+                //         index:'HelloWorld',
+                //         title:"本地页面",
+                //         name:'HelloWorld',
+                //         component:'@/components/HelloWorld.vue',
+                //         path:'/home/pages/helloWorld',
+                //         menuorigin:'local'
+                //     },
+                //     {
+                //         index:'BaseTable',
+                //         title:"基础表格",
+                //         name:'BaseTable',
+                //         component:'@/components/pages/BaseTable.vue',
+                //         path:'/home/pages/base-table',
+                //         icon:'el-icon-setting',
+                //         menuorigin:'local'
+                //     },
+                //     {
+                //         index:'SettingInfo',
+                //         title:"设置页面",
+                //         name:'SettingInfo',
+                //         component:'@/components/pages/SettingInfo.vue',
+                //         path:'/home/pages/settingInfo',
+                //         icon:'el-icon-setting',
+                //         menuorigin:'local'
+                //     },
+                //     {
+                //         index:'403',
+                //         title:"403",
+                //         name:'403',
+                //         component:'@/components/pages/403.vue',
+                //         path:'/home/pages/403',
+                //         menuorigin:'local'
+                //     },
+                //     {
+                //         index:'SelfDefineIcon',
+                //         title:"自定义图标",
+                //         name:'SelfDefineIcon',
+                //         icon:'iconfont icon-smell',
+                //         component:'@/components/pages/Icon.vue',
+                //         path:'/home/pages/Icon',
+                //         menuorigin:'local'
+                //
+                //     },
+                //     {
+                //         index:'DragComponents',
+                //         title:"拖拽组件",
+                //         name:'DragComponents',
+                //         icon:'el-icon-rank',
+                //         children: [
+                //             {
+                //                 index:'DragList',
+                //                 title:"拖拽列表",
+                //                 name:'DragList',
+                //                 icon:'',
+                //                 component:'@/components/pages/DragList.vue',
+                //                 path:'/home/pages/DragList',
+                //                 menuorigin:'local',
+                //             }
+                //         ]
+                //
+                //     },
+                //     {
+                //         index:'UserManage',
+                //         title:"用户管理",
+                //         name:'UserManage',
+                //         icon:'el-icon-setting',
+                //         children: [
+                //             {
+                //                 index:'SystemUser',
+                //                 title:"系统用户",
+                //                 name:'SystemUser',
+                //                 icon:'el-icon-user',
+                //                 component:'@/components/pages/system/SystemUser.vue',
+                //                 path:'/home/pages/system-user',
+                //                 menuorigin:'local',
+                //             }
+                //         ]
+                //
+                //     },
+                //     {
+                //         index:'PermissionManage',
+                //         title:"权限管理",
+                //         name:'PermissionManage',
+                //         icon:'el-icon-setting',
+                //         children: [
+                //             {
+                //                 index:'RoleManage',
+                //                 title:"角色管理",
+                //                 name:'RoleManage',
+                //                 icon:'el-icon-user',
+                //                 component:'@/components/pages/system/RoleManage.vue',
+                //                 path:'/home/pages/role-manage',
+                //                 menuorigin:'local',
+                //             },
+                //             {
+                //                 index:'OrganizationManage',
+                //                 title:"组织机构",
+                //                 name:'OrganizationManage',
+                //                 icon:'iconfont icon-organization',
+                //                 component:'@/components/pages/system/OrganizationManage.vue',
+                //                 path:'/home/pages/organization-manage',
+                //                 menuorigin:'local',
+                //             },
+                //             {
+                //                 index:'MenuManager',
+                //                 title:"菜单管理",
+                //                 name:'MenuManager',
+                //                 icon:'el-icon-menu',
+                //                 component:'@/components/pages/system/MenuManage.vue',
+                //                 path:'/home/pages/menu-manage',
+                //                 menuorigin:'local',
+                //             }
+                //         ]
+                //     },
+                //     {
+                //         index:'Donate',
+                //         title:"支持作者",
+                //         name:'Donate',
+                //         icon:"iconfont icon-redpacket_fill",
+                //         component:'@/components/pages/Donate.vue',
+                //         path:'/home/pages/Donate',
+                //         menuorigin:'local'
+                //     }
+                // ]
             };
         },
 
@@ -219,17 +230,24 @@
             }
         },
         methods: {
+            //home页传值选中左侧菜单
+            handleSelectedFromHome(key, keyPath,aside_list){
+                this.aside_list = aside_list
+                this.handleSelected(key, keyPath,aside_list);
+            },
+            //左侧菜单栏选中
             handleSelected: function (key, keyPath) {
-                this.default_active_index = key
+                // this.default_active_index = key
+                this.$set(this.default_active_index,'active',key)
 
-                let tabNode = {"title":'',"path":'',"type":'',"component":''}
+                let tabNode = {"title":'',"path":'',"menuorigin":'',"component":''}
                 for(let i = 0;i<this.aside_list.length;++i){
                     if(this.aside_list[i].index == keyPath[0] && keyPath.length>1){
                         this.aside_list[i].children.forEach(item=>{
                             if(item.index == keyPath[1]){
                                 tabNode.title = item.title
                                 tabNode.path = item.path
-                                tabNode.type = item.type
+                                tabNode.menuorigin = item.menuorigin
                                 tabNode.component = item.component || ''
                                 tabNode.key = key
                                 tabNode.keyPath = keyPath
@@ -240,7 +258,7 @@
                     }else if(this.aside_list[i].index == keyPath[0] && keyPath.length==1){
                         tabNode.title = this.aside_list[i].title
                         tabNode.path = this.aside_list[i].path
-                        tabNode.type = this.aside_list[i].type
+                        tabNode.menuorigin = this.aside_list[i].menuorigin
                         tabNode.component = this.aside_list[i].component || ''
                         tabNode.key = key
                         tabNode.keyPath = keyPath
@@ -260,7 +278,10 @@
             addTab(tabNode) {
 
                 let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
-                new_tab_list_keepAlive.push(tabNode.name)
+
+                if(!new_tab_list_keepAlive.includes(tabNode.name,0)){
+                    new_tab_list_keepAlive.push(tabNode.name)
+                }
                 this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
                 //判断当前tab是否已存在，若存在，则直接激活即可
                 let is_Existed = false;
@@ -272,16 +293,16 @@
                 })
                 if(is_Existed){
                     this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
-                    if(tabNode.type == "local"){
-                        this.$router.replace(tabNode.path);
+                    if(tabNode.menuorigin == "local"){
+                        this.$router.push(tabNode.path);
                     }
                     return
                 }
                 //当前tab不存在，添加新的tab页，并激活
                 let content = ''
-                if(tabNode.type == "local"){
+                if(tabNode.menuorigin == "local"){
                     this.$router.push(tabNode.path)
-                }else if(tabNode.type == "remote"){
+                }else if(tabNode.menuorigin == "remote"){
                     content = "<object type='text/html' data='"+tabNode.path+"' width='100%' height='100%'></object>"
                 }
 
@@ -289,7 +310,7 @@
                     title: tabNode.title,
                     name: tabNode.name,
                     content: content,
-                    type:tabNode.type,
+                    menuorigin:tabNode.menuorigin,
                     path:tabNode.path,
                     key:tabNode.key,
                     keyPath:tabNode.keyPath
