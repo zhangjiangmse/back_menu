@@ -75,8 +75,7 @@
 
         },
         // mounted() {
-        //     // eslint-disable-next-line no-debugger
-        //     debugger
+
         //     // 使用原生js 为单个dom绑定鼠标右击事件
         //     let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
         //     tab_top_dom[1].oncontextmenu = this.openContextMenu
@@ -106,7 +105,6 @@
                    this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
                        .then(function (response) {
                            if(response.data.flag == 1){
-
                                 _this.mainMenuTabs = response.data.result[0].children
                            }else{
                                _this.$message.error(response.data.msg);
@@ -138,6 +136,7 @@
                _this.bindRightClickMenu()
            },
            reload(title) {
+               console.log("刷新菜单")
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
                let currentContextTabId = title
                if(title == null ||title == ''){
@@ -166,10 +165,15 @@
 
                //如果移除的是当前Tab页，则激活当前页的上页或下页
                if (this.editableTabsValue['active-tab'] === targetName) {
+                   // eslint-disable-next-line no-debugger
+                   debugger
                    let nextTab = this.editableTabs[targetIndex + 1] || this.editableTabs[targetIndex - 1];
                    if (nextTab) {
                        key = nextTab.key
                        keyPath = nextTab.keyPath
+                   }else{
+                       this.editableTabs.splice(targetIndex,1)
+                       return
                    }
                    //调用子组件的方法，设置默认选中
                    //查找主Tab的名称
@@ -187,8 +191,7 @@
                            break
                        }
                    }
-                   // eslint-disable-next-line no-debugger
-                   debugger
+
                    this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
                    // this.$refs.aside[0].handleSelected(key,keyPath);
                }
@@ -199,8 +202,7 @@
             */
            clickTab(tab) {
                let _this = this
-               // eslint-disable-next-line no-debugger
-               debugger
+
                 //查找主Tab的名称
                 let childrenNode = _this.mainMenuTabs.concat()
                 let tempData = {"id": 0, title: '', children: childrenNode}
@@ -341,8 +343,7 @@
            },
            // 关闭所有标签页
            closeAllTabs() {
-               // eslint-disable-next-line no-debugger
-               debugger
+
                //删除所有tab标签
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中

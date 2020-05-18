@@ -244,7 +244,7 @@
                         _this.buildDataForMenuSelected(_this.menuOptions[0], curId, array, searchResult)
                         _this.addOrEditForm = Object.assign({}, row);
                         _this.$set(_this.addOrEditForm, 'parentMenu', array)
-                        _this.$set(_this.addOrEditForm, 'menuOrigin', 'local')
+                        // _this.$set(_this.addOrEditForm, 'menuOrigin', 'local')
 
                         //打开弹窗
                         _this.openAddOrEditDialog()

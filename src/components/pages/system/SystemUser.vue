@@ -242,6 +242,8 @@
             }
         },
         created(){
+            // eslint-disable-next-line no-debugger
+            debugger
             this.initTableAttr();
             this.queryAll();
         },

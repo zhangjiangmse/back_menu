@@ -75,7 +75,7 @@
             </el-pagination>
         </el-row>
         <!-- 新增弹框-->
-        <el-dialog title="新增角色" :visible.sync="dialogFormVisible" ref="addOrEditDialog">
+        <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible" ref="addOrEditDialog">
             <el-row>
                 <el-form :model="addOrEditForm"  size="mini" ref="addOrEditForm" :rules="addOrEditFormRules">
                     <el-form-item label="角色名：" :label-width="formLabelWidth" prop="name">
@@ -141,11 +141,13 @@ export default {
             formLabelWidth:'150px',
             menuOptions:[],
             props: { multiple: true,value:"id",label:"text" },
+            dialogTitle:""
 
         }
     },
     created(){
-
+        // eslint-disable-next-line no-debugger
+        debugger
         this.queryAll();
     },
     computed :{
@@ -185,65 +187,30 @@ export default {
         },
         // 单条数据修改
         handleEditRow(row){
-            console.log(row)
+
             let _this = this
             let param = {"showTop":true}
+            let menuIdsArray = row.menuIds.split(",")
+            let menuId_index =menuIdsArray.length
 
-            let menuId_index = row.menuIds.split(",").length
             this.$axios.post("/menu/getAllMenuTree",param,{"baseURL":'csm-base-member'})
                 .then(function (response) {
                     let data = response.data
-                    let menuId_Cascader = []
+
                     if(data.flag == 1){
+                        // eslint-disable-next-line no-debugger
+                        debugger
                         _this.menuOptions = data.result
                         // 构造级联面板的选中参数
-                        for(let i = 0 ;i < _this.menuOptions.length; ++i){
-
-                            let route = []
-                            let c1 = _this.menuOptions[i].children
-                            route.push(_this.menuOptions[i].id)
-                            if(c1 != undefined){
-                                for(let  j = 0 ;j < c1.length; ++j){
-
-                                    route.push(c1[j].id)
-                                    let c2 = c1[j].children
-                                    if(c2 != undefined){
-                                        for(let  k = 0 ;k < c2.length; ++k){
-
-                                            route.push(c2[k].id)
-                                            if(row.menuIds.includes(c2[k].id)){
-                                                menuId_Cascader.push(route.concat())
-                                                --menuId_index;
-                                            }
-                                            route.pop()
-                                            if(menuId_index <= 0){
-                                                break
-                                            }
-                                        }
-                                    }
-                                    if(row.menuIds.includes(c1[j].id)){
-                                        menuId_Cascader.push(route.concat())
-                                        --menuId_index;
-                                    }
-                                    route.pop()
-                                    if(menuId_index <= 0){
-                                        break
-                                    }
-                                }
-                            }
-                            if(row.menuIds.includes(_this.menuOptions[i].id)){
-                                menuId_Cascader.push(route.concat())
-                                --menuId_index;
-                            }
-                            route.pop()
-                            if(menuId_index <= 0){
-                                break
-                            }
-                        }
-                        console.log(menuId_Cascader)
-                        _this.$set(_this.addOrEditForm,'menuIds',menuId_Cascader)
+                        let currRes = []
+                        let result = []
+                        _this.buildCascaderMultipleData(_this.menuOptions[0],menuIdsArray,currRes,result,{"index":menuId_index})
+                        // eslint-disable-next-line no-debugger
+                        debugger
+                        _this.$set(_this.addOrEditForm,'menuIds',result)
                         _this.$set(_this.addOrEditForm,'roleId',row.id)
                         _this.$set(_this.addOrEditForm,'name',row.name)
+                        _this.dialogTitle = '编辑角色'
                         _this.openAddOrEditDialog()
                     }else{
                         _this.$message.error(response.data.msg);
@@ -251,10 +218,38 @@ export default {
                 }).catch(function (error) {
                 console.log(error);
             });
-
-
         },
-
+        //递归寻找级联面板路径
+        buildCascaderMultipleData(root,targets,currRes,result,searchFlag){
+            let _this = this
+            if(searchFlag.index <= 0){
+                return
+            }
+            if(root.id != undefined && targets.includes(root.id)){
+                currRes.push(root.id)
+                result.push(currRes.concat())
+                if(root.children == undefined || root.children.length == 0){
+                    currRes.pop()
+                }
+                let index = searchFlag.index
+                this.$set(searchFlag,'index',--index)
+                return
+            }else {
+                currRes.push(root.id)
+                let children = root.children
+                if(children!= undefined && children != null){
+                    children.forEach(item=>{
+                        _this.buildCascaderMultipleData(item, targets,currRes, result,searchFlag)
+                    })
+                    if(searchFlag.index > 0){
+                        currRes.pop()
+                    }
+                }else{
+                    currRes.pop()
+                    return;
+                }
+            }
+        },
         // 设置默认角色
         handleIsDefaultRole(row){
             console.log(row)
@@ -360,6 +355,7 @@ export default {
             this.$set(this.addOrEditForm,'roleId','')
             this.$set(this.addOrEditForm,'name','')
             this.$set(this.addOrEditForm,'menuId',[])
+            this.dialogTitle = '新增角色'
             //打开弹窗
             this.openAddOrEditDialog()
             this.$nextTick(()=>{

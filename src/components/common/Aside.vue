@@ -232,11 +232,13 @@
         methods: {
             //home页传值选中左侧菜单
             handleSelectedFromHome(key, keyPath,aside_list){
+
                 this.aside_list = aside_list
                 this.handleSelected(key, keyPath,aside_list);
             },
             //左侧菜单栏选中
             handleSelected: function (key, keyPath) {
+
                 // this.default_active_index = key
                 this.$set(this.default_active_index,'active',key)
 
@@ -282,6 +284,7 @@
                 if(!new_tab_list_keepAlive.includes(tabNode.name,0)){
                     new_tab_list_keepAlive.push(tabNode.name)
                 }
+
                 this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
                 //判断当前tab是否已存在，若存在，则直接激活即可
                 let is_Existed = false;
@@ -291,11 +294,15 @@
                         return
                     }
                 })
+
                 if(is_Existed){
+
                     this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
+
                     if(tabNode.menuorigin == "local"){
                         this.$router.push(tabNode.path);
                     }
+
                     return
                 }
                 //当前tab不存在，添加新的tab页，并激活
