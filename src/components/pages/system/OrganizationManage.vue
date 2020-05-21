@@ -132,7 +132,6 @@
         methods:{
             //查询按钮事件
             queryAll(){
-
                 this.currentPage = 1
                 this.queryData();
             },

@@ -147,8 +147,6 @@ export default {
         }
     },
     created(){
-        // eslint-disable-next-line no-debugger
-        debugger
         this.queryAll();
     },
     computed :{
@@ -158,9 +156,6 @@ export default {
     },
     methods:{
 
-        onSubmit(){
-
-        },
         //查询按钮事件
         queryAll(){
             this.currentPage = 1

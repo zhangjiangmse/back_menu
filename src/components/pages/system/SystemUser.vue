@@ -239,9 +239,7 @@
             }
         },
         created(){
-            // eslint-disable-next-line no-debugger
-            debugger
-            this.initTableAttr();
+
             this.queryAll();
         },
         computed :{
@@ -250,15 +248,7 @@
             }  
         },
         methods:{
-            initTableAttr(){
-                let init_maxTableHeight = this.$store.getters.tabPanelHeight
-                this.maxTableHeight = init_maxTableHeight
-                //设定Table的高度
-                this.tableHeight = init_maxTableHeight * 0.798
-            },
-            onSubmit(){
 
-            },
             //查询按钮事件
             queryAll(){
                 this.currentPage = 1
@@ -296,8 +286,7 @@
                         let parentOrg = []
                         let searchFlag = {flag:false}
                         _this.buildSingleSeletedCasecaderVal(_this.orgOptions[0],row.orgId,parentOrg,searchFlag)
-                        // eslint-disable-next-line no-debugger
-                        debugger
+
                         _this.addOrEditForm = {
                             "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
                             "tel":row.tel,"email":row.email,"roleId":row.roleId,"parentOrg":parentOrg,
@@ -402,8 +391,7 @@
             },
             // 查询 组织机构信息
             async getOrganizationTree(){
-                // eslint-disable-next-line no-debugger
-                debugger
+
                 let _this = this
                 let param = {"showTop": true}
                 await this.$axios.post("/organization/getOrganizationTree",param,{"baseURL":'csm-base-member'})
