@@ -6,7 +6,7 @@
             <el-button type="primary"  @click="toggleRowExpansion(false)" icon="el-icon-arrow-up" size="mini">全部收回</el-button>
         </el-row>
         <el-row  class="row-table">
-            <el-table :data="tableData" border style="width: 100%;" size="mini" ref="dataTreeList" class="table-1"
+            <el-table :data="tableData" border style="width: 100%;" size="mini" ref="dataTreeList" class="table-1" v-loading="table_loading"
                       :default-sort="{prop:'createTime',order:'descending'}"
                       height="100%"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
@@ -41,6 +41,12 @@
                         </el-tooltip>
                         <el-tooltip  effect="dark" content="删除" placement="bottom-start">
                             <el-button type="text" size="medium" @click="handleDeleteRow(scope.row)" icon="el-icon-delete"></el-button>
+                        </el-tooltip>
+                        <el-tooltip  effect="dark" content="新增" placement="bottom-start">
+                            <el-button type="text" size="medium" @click="handleAddRow(scope.row)" icon="el-icon-plus"></el-button>
+                        </el-tooltip>
+                        <el-tooltip  effect="dark" content="绑定用户" placement="bottom-start">
+                            <el-button type="text" size="medium" @click="handleBindUser(scope.row)" icon="el-icon-edit-outline"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -81,10 +87,13 @@
         name: "OrganizationManage",
         data(){
             return {
+                table_loading:false,
                 searchListForm:{},
                 addOrEditForm:{
-                    roleId:'',
-                    menuIds:[]
+                    id:'',
+                    name:'',
+                    code:'',
+                    parentOrg:[]
                 },
                 addOrEditFormRules:{
                     name: [
@@ -121,9 +130,6 @@
             }
         },
         methods:{
-            onSubmit(){
-
-            },
             //查询按钮事件
             queryAll(){
                 this.currentPage = 1
@@ -131,15 +137,16 @@
             },
             //数据查询请求
             queryData(){
-
                 let _this = this
+                _this.table_loading = true
                 let param = this.searchListForm
-                this.$axios.post("/organization/getOrganizationTree?currentPage="+this.currentPage+"&pageSize="+this.pageSize,param,{"baseURL":'csm-base-member'})
+                this.$axios.post("/organization/getOrganizationTree?currentPage="+this.currentPage+"&pageSize="+this.pageSize+"&showTop=false",param,{"baseURL":'csm-base-member'})
                     .then(function (response) {
                         let data = response.data
                         console.log(data)
                         if(data.flag == 1){
                             _this.tableData = data.result
+                            _this.table_loading = false
                         }else{
                             _this.$message.error(response.data.msg);
                         }
@@ -153,118 +160,104 @@
                     this.$refs.dataTreeList.toggleRowExpansion(item,isExpansion);
                 })
             },
-            // 单条数据修改
-            handleEditRow(row){
-                console.log(row)
+            // 获取组织机构树
+            async getOrganizationTree() {
                 let _this = this
-                let param = {"showTop":false}
-
-                let menuId_index = row.menuIds.split(",").length
-                this.$axios.post("/menu/getAllMenuTree",param,{"baseURL":'csm-base-member'})
+                let param = {"showTop": true}
+                await this.$axios.post("/organization/getOrganizationTree", param, {"baseURL": 'csm-base-member'})
                     .then(function (response) {
                         let data = response.data
-                        let menuId_Cascader = []
-                        if(data.flag == 1){
-                            _this.menuOptions = data.result
-                            // 构造级联面板的选中参数
-                            for(let i = 0 ;i < _this.menuOptions.length; ++i){
-                                // eslint-disable-next-line no-debugger
-                                 debugger
-                                let route = []
-                                let c1 = _this.menuOptions[i].children
-                                route.push(_this.menuOptions[i].id)
-                                if(c1 != undefined){
-                                    for(let  j = 0 ;j < c1.length; ++j){
-
-                                        route.push(c1[j].id)
-                                        let c2 = c1[j].children
-                                        if(c2 != undefined){
-                                            for(let  k = 0 ;k < c2.length; ++k){
-
-                                                route.push(c2[k].id)
-                                                if(row.menuIds.includes(c2[k].id)){
-                                                    menuId_Cascader.push(route.concat())
-                                                    --menuId_index;
-                                                }
-                                                route.pop()
-                                                if(menuId_index <= 0){
-                                                    break
-                                                }
-                                            }
-                                        }
-                                        if(row.menuIds.includes(c1[j].id)){
-                                            menuId_Cascader.push(route.concat())
-                                            --menuId_index;
-                                        }
-                                        route.pop()
-                                        if(menuId_index <= 0){
-                                            break
-                                        }
-                                    }
-                                }
-                                if(row.menuIds.includes(_this.menuOptions[i].id)){
-                                    menuId_Cascader.push(route.concat())
-                                    --menuId_index;
-                                }
-                                route.pop()
-                                if(menuId_index <= 0){
-                                    break
-                                }
-                            }
-                            console.log(menuId_Cascader)
-                            _this.$set(_this.addOrEditForm,'menuIds',menuId_Cascader)
-                            _this.$set(_this.addOrEditForm,'roleId',row.id)
-                            _this.$set(_this.addOrEditForm,'name',row.name)
-                            _this.openAddOrEditDialog()
-                        }else{
+                        if (data.flag == 1) {
+                            _this.orgOptions = data.result
+                        } else {
                             _this.$message.error(response.data.msg);
                         }
                     }).catch(function (error) {
-                    console.log(error);
-                });
-
-
-            },
-
-            // 设置默认角色
-            handleIsDefaultRole(row){
-                console.log(row)
-                let _this = this
-                let param = {"id":row.id}
-                this.$confirm('确定是否进行设置默认角色操作, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                    center: true
-                }).then(() => {
-                    this.$axios.post("/role/markDefaultRole",param,{"baseURL":'csm-base-member'})
-                        .then(function (response) {
-                            let data = response.data
-                            if(data.flag == 1){
-                                _this.$message({
-                                    type: 'success',
-                                    message: '设置默认角色成功!'
-                                });
-                                _this.queryAll()
-                            }else{
-                                _this.$message.error(response.data.msg);
-                            }
-                        }).catch(function (error) {
                         console.log(error);
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
                     });
-                });
+            },
+            // 单条数据修改
+            handleEditRow(row){
+                let _this = this
+                _this.table_loading = true
+
+                let promises=[_this.getOrganizationTree()]
+                return Promise.all(promises)
+                    .then(()=>{
+                        // 构造级联面板的选中参数
+                        let result = []
+                        let searchFlag = {flag:false}
+                        _this.buildSingleSeletedCasecaderVal(_this.orgOptions[0],row.id,result,searchFlag)
+                        console.log(result)
+                        result.pop()
+                        _this.$set(_this.addOrEditForm,'parentOrg',result)
+                        _this.$set(_this.addOrEditForm,'id',row.id)
+                        _this.$set(_this.addOrEditForm,'name',row.name)
+                        _this.$set(_this.addOrEditForm,'code',row.code)
+                        _this.openAddOrEditDialog()
+
+                        _this.table_loading = false
+                    })
+                    .catch(err=>console.error(err))
 
             },
+            /**
+             * 构造单选级联面板选中数据的完整路径
+             * root : 全部数据，一颗以0为根节点的多叉树
+             * target: 寻找的目标节点id,例如 id = '2'
+             * res: 存放结果路径，例如：["0","1","2"]
+             * searchFlag : 是否找到，找到即返回递归
+              */
+            buildSingleSeletedCasecaderVal(root,target,res,searchFlag){
+                if(searchFlag.flag){
+                    return
+                }
+                if(root.id == target){
+                    res.push(target)
+                    this.$set(searchFlag,"flag",true)
+                    return;
+                }else{
+                    res.push(root.id)
+                    let children = root.children
+                    if(children != undefined && children.length != 0){
+                        children.forEach(item=>{
+                            this.buildSingleSeletedCasecaderVal(item,target,res,searchFlag)
+                        })
+                    }
+                    if(searchFlag.flag){
+                        return
+                    }
+                    res.pop();
+                }
+            },
+
             // 单条数据删除
             handleDeleteRow(row){
 
                 let selected = row.id
                 this.deleteData(selected)
+            },
+            // 添加数据  -> 默认选中上级机构
+            handleAddRow(row){
+                let _this = this
+                _this.table_loading = true
+                let promises=[_this.getOrganizationTree()]
+                return Promise.all(promises)
+                    .then(()=>{
+                        // 构造级联面板的选中参数
+                        let result = []
+                        let searchFlag = {flag:false}
+                        _this.buildSingleSeletedCasecaderVal(_this.orgOptions[0],row.id,result,searchFlag)
+
+                        _this.$set(_this.addOrEditForm,'parentOrg',result)
+                        _this.$set(_this.addOrEditForm,'id','')
+                        _this.$set(_this.addOrEditForm,'name','')
+                        _this.$set(_this.addOrEditForm,'code','')
+
+                        _this.openAddOrEditDialog()
+                        _this.table_loading = false
+                    })
+                    .catch(err=>console.error(err))
             },
             // 弹窗内 ---> 确定按钮
             confirm(){
@@ -281,11 +274,11 @@
                     type: 'warning',
                     center: true
                 }).then(() => {
-                    this.$axios.post("/role/deleteSysRole",param,{"baseURL":'csm-base-member'})
+                    this.$axios.post("/organization/deleteOrganization",param,{"baseURL":'csm-base-member'})
                         .then(function (response) {
                             let data = response.data
                             if(data.flag == 1){
-                                _this.$message({
+                                    _this.$message({
                                     type: 'success',
                                     message: '删除成功!'
                                 });
@@ -304,43 +297,29 @@
                 });
             },
             // 打开弹窗  --->对弹窗作前置条件处理
-            async openAddOrEditDialog() {
-                let _this = this
-                //查询 角色菜单
-                if (_this.menuOptions == null) {
-                    //let param = {"showTop": false}
-                    await this.$axios.post("/organization/getOrganizationTree", null, {"baseURL": 'csm-base-member'})
-                        .then(function (response) {
-                            let data = response.data
-                            if (data.flag == 1) {
-                               //_this.orgOptions = data.result
-                                // eslint-disable-next-line no-debugger
-                                debugger
-                                _this.orgOptions.unshift({"id":0,"name":"全部分类",children:data.result})
-                            } else {
-                                _this.$message.error(response.data.msg);
-                            }
-                        }).catch(function (error) {
-                            console.log(error);
-                        });
-                }
-                setTimeout(() => {
-                    //设置宽度 form的宽度 + 'px'
-                    this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
-                    //弹窗
-                    this.dialogFormVisible = true
-                }, 1)
+            openAddOrEditDialog() {
+                //设置宽度 form的宽度 + 'px'
+                this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
+                //弹窗
+                this.dialogFormVisible = true
             },
             // 新增 按钮
             add(){
-                this.$set(this.addOrEditForm,'roleId','')
-                this.$set(this.addOrEditForm,'name','')
-                this.$set(this.addOrEditForm,'menuId',[])
-                //打开弹窗
-                this.openAddOrEditDialog()
-                this.$nextTick(()=>{
-                    this.resetForm('addOrEditForm')
-                })
+                let _this = this
+                _this.table_loading = true
+                let promises=[_this.getOrganizationTree()]
+                return Promise.all(promises)
+                    .then(()=>{
+                        this.$set(this.addOrEditForm,'id','')
+                        this.$set(this.addOrEditForm,'name','')
+                        this.$set(this.addOrEditForm,'code','')
+                        this.$set(this.addOrEditForm,'parentOrg',[])
+                        _this.openAddOrEditDialog()
+                        _this.table_loading = false
+                        _this.resetForm('addOrEditForm')
+                    })
+                    .catch(err=>console.error(err))
+
             },
             //弹窗内 --->保存按钮
             saveRoleInfo(){
@@ -351,7 +330,7 @@
                         // 构造参数
                         let param =  _this.buildSaveRoleParam()
                         //处理保存信息请求
-                        this.$axios.post("/role/saveSysRole",param,{"baseURL":'csm-base-member'})
+                        this.$axios.post("/organization/saveOrganization",param,{"baseURL":'csm-base-member'})
                             .then(function (response) {
                                 if(response.data.flag == 1){
                                     _this.$message.success("保存成功");
@@ -370,26 +349,11 @@
                     }
                 });
             },
-            // 构造保存角色参数
+            // 构造保存参数
             buildSaveRoleParam(){
-                // eslint-disable-next-line no-debugger
-                debugger
-                let roleId = this.addOrEditForm.roleId
-                let menuIds = ''
-                let cloneMenuIds = ''
-                this.addOrEditForm.menuIds.forEach((item)=>{
-                    menuIds += item[item.length-1] + ","
-                    item.forEach((item_children)=>{
-                        if(!cloneMenuIds.includes(item_children)){
-                            cloneMenuIds += item_children + ","
-                        }
-                    })
 
-                })
-                menuIds = menuIds.substring(0,menuIds.length-1)
-                cloneMenuIds = cloneMenuIds.substring(0,cloneMenuIds.length-1)
-
-                let param = {id:roleId,menuIds:menuIds,cloneMenuIds:cloneMenuIds,roleType:1,name:this.addOrEditForm.name}
+                let param = Object.assign({},this.addOrEditForm)
+                this.$set(param,"parentid",this.addOrEditForm.parentOrg[this.addOrEditForm.parentOrg.length-1])
                 return param
             },
             // 弹窗内 ->级联面板选中改变时

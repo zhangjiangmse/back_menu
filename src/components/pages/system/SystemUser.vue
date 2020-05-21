@@ -122,14 +122,10 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="所在部门：" :label-width="formLabelWidth" prop="orgId">
-                        <el-select v-model="addOrEditForm.orgId" placeholder="请选择部门" size="mini" :style="{width:this.addDialogInputWidth}">
-                            <el-option
-                                    v-for="item in orgOptions"
-                                    :key="item.id"
-                                    :label="item.name"
-                                    :value="item.id">
-                            </el-option>
-                        </el-select>
+                        <el-cascader ref="orgCascader" v-model="addOrEditForm.parentOrg" :style="{width:this.addDialogInputWidth}" :show-all-levels="false"
+                                     :options="orgOptions"
+                                     :props="props"
+                                     clearable></el-cascader>
                     </el-form-item>
                     <el-form-item label="是否是电话坐席：" :label-width="formLabelWidth" prop="istelAccount">
                         <el-select v-model="addOrEditForm.istelAccount" placeholder="请选择" size="mini" :style="{width:this.addDialogInputWidth}">
@@ -239,12 +235,11 @@
                     {label:'在线坐席',value:"1"},
                     {label:'非在线坐席',value:"0"}
                 ],
+                props: { value:"id",label:"name",checkStrictly: true },
             }
         },
         created(){
-            // eslint-disable-next-line no-debugger
-            debugger
-            this.initTableAttr();
+
             this.queryAll();
         },
         computed :{
@@ -253,15 +248,7 @@
             }  
         },
         methods:{
-            initTableAttr(){
-                let init_maxTableHeight = this.$store.getters.tabPanelHeight
-                this.maxTableHeight = init_maxTableHeight
-                //设定Table的高度
-                this.tableHeight = init_maxTableHeight * 0.798
-            },
-            onSubmit(){
 
-            },
             //查询按钮事件
             queryAll(){
                 this.currentPage = 1
@@ -289,15 +276,56 @@
             // 单条数据修改
             handleEditRow(row){
 
-                this.addOrEditForm = {
-                    "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
-                    "tel":row.tel,"email":row.email,"roleId":row.roleId,"orgId":row.orgId,
-                    "istelAccount":row.istelAccount,"isonlineAccount":row.isonlineAccount
-                }
-                this.$set(this.isShowObj,"isShowPwd",false)
-                // this.isDisabledPwdInput = true
-                this.openAddOrEditDialog()
+                let _this = this
+                _this.table_loading = true
+                _this.$set(this.isShowObj,"isShowPwd",false)
+                let promises=[_this.queryRoleListForSelect(),_this.getOrganizationTree()]
+                return Promise.all(promises)
+                    .then(()=>{
+                        // 构造级联面板的选中参数
+                        let parentOrg = []
+                        let searchFlag = {flag:false}
+                        _this.buildSingleSeletedCasecaderVal(_this.orgOptions[0],row.orgId,parentOrg,searchFlag)
 
+                        _this.addOrEditForm = {
+                            "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
+                            "tel":row.tel,"email":row.email,"roleId":row.roleId,"parentOrg":parentOrg,
+                            "istelAccount":row.istelAccount,"isonlineAccount":row.isonlineAccount
+                        }
+                        _this.openAddOrEditDialog()
+                        _this.table_loading = false
+                    })
+                    .catch(err=>console.error(err))
+
+            },
+            /**
+             * 构造单选级联面板选中数据的完整路径
+             * root : 全部数据，一颗以0为根节点的多叉树
+             * target: 寻找的目标节点id,例如 id = '2'
+             * res: 存放结果路径，例如：["0","1","2"]
+             * searchFlag : 是否找到，找到即返回递归
+             */
+            buildSingleSeletedCasecaderVal(root,target,res,searchFlag){
+                if(searchFlag.flag){
+                    return
+                }
+                if(root.id == target){
+                    res.push(target)
+                    this.$set(searchFlag,"flag",true)
+                    return;
+                }else{
+                    res.push(root.id)
+                    let children = root.children
+                    if(children != undefined && children.length != 0){
+                        children.forEach(item=>{
+                            this.buildSingleSeletedCasecaderVal(item,target,res,searchFlag)
+                        })
+                    }
+                    if(searchFlag.flag){
+                        return
+                    }
+                    res.pop();
+                }
             },
             // 单条数据删除
             handleDeleteRow(row){
@@ -345,11 +373,10 @@
                 });
 
             },
-            // 打开弹窗  --->对弹窗作前置条件处理
-            openAddOrEditDialog(){
+            //查询 角色信息
+            async queryRoleListForSelect(){
                 let _this = this
-                //查询 角色信息
-                this.$axios.post("/role/queryRoleListForSelect",null,{"baseURL":'csm-base-member'})
+                await this.$axios.post("/role/queryRoleListForSelect",null,{"baseURL":'csm-base-member'})
                     .then(function (response) {
                         console.log(response)
                         let data = response.data
@@ -361,12 +388,17 @@
                     }).catch(function (error) {
                     console.log(error);
                 });
-                // 查询 组织机构信息
-                this.$axios.post("/organization/getOrganizationTree",null,{"baseURL":'csm-base-member'})
+            },
+            // 查询 组织机构信息
+            async getOrganizationTree(){
+
+                let _this = this
+                let param = {"showTop": true}
+                await this.$axios.post("/organization/getOrganizationTree",param,{"baseURL":'csm-base-member'})
                     .then(function (response) {
-                        console.log(response)
                         let data = response.data
                         if(data.flag == 1){
+
                             _this.orgOptions = data.result
                         }else{
                             _this.$message.error(response.data.msg);
@@ -374,6 +406,9 @@
                     }).catch(function (error) {
                     console.log(error);
                 });
+            },
+            // 打开弹窗  --->对弹窗作前置条件处理
+            openAddOrEditDialog(){
                 //设置宽度 form的宽度 + 'px'
                 this.formLabelWidth = this.$store.getters.windowWidth * 0.5 * 0.35 + 'px'
                 //弹窗
@@ -381,12 +416,16 @@
             },
             // 新增 按钮
             add(){
-                //重置表单
-                this.$set({},this.addOrEditForm)
-                //新增 显示密码框
-                this.$set(this.isShowObj,"isShowPwd",true)
-                //打开弹窗
-                this.openAddOrEditDialog()
+                let _this = this
+                _this.table_loading = true
+                let promises=[_this.queryRoleListForSelect(),_this.getOrganizationTree()]
+                return Promise.all(promises)
+                    .then(()=>{
+                        Object.assign({},_this.addOrEditForm)
+                        _this.openAddOrEditDialog()
+                        _this.table_loading = false
+                    })
+                    .catch(err=>console.error(err))
             },
             //弹窗内 --->保存按钮
             saveUserInfo(){
@@ -394,7 +433,7 @@
                 this.$refs.addOrEditForm.validate((valid) => {
                     if (valid) {
                         //处理保存信息请求
-                        let param = _this.addOrEditForm
+                        let param = _this.buildSaveRoleParam()
                         this.$axios.post("/user/saveSysUser",param,{"baseURL":'csm-base-member'})
                             .then(function (response) {
                                 if(response.data.flag == 1){
@@ -412,6 +451,13 @@
                         return false;
                     }
                 });
+            },
+            // 构造保存参数
+            buildSaveRoleParam(){
+
+                let param = Object.assign({},this.addOrEditForm)
+                this.$set(param,"orgId",this.addOrEditForm.parentOrg[this.addOrEditForm.parentOrg.length-1])
+                return param
             },
             //重置密码请求
             handleResetPwd(row){
