@@ -34,7 +34,7 @@
                 </el-col>
             </el-form>
         </el-row>
-        <el-row>
+        <el-row class="bottom">
             <el-button type="primary" @click="queryAll" icon="el-icon-search" size="mini">查询</el-button>
             <el-button type="primary" @click="add" icon="el-icon-plus" size="mini" >新增</el-button>
             <el-button type="primary" @click="onSubmit" icon="el-icon-refresh" size="mini">同步呼叫中心用户</el-button>
@@ -488,6 +488,8 @@
         width: 100%;
         top: 0px;
         bottom: 0px;
-
+    }
+    .bottom {
+        bottom: 5px;
     }
 </style>

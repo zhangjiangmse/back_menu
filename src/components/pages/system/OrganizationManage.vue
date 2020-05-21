@@ -1,6 +1,6 @@
 <template>
     <div  class="singlePage">
-        <el-row >
+        <el-row  class="bottom">
             <el-button type="primary"  @click="add" icon="el-icon-plus" size="mini">新增</el-button>
             <el-button type="primary"  @click="toggleRowExpansion(true)" icon="el-icon-arrow-down" size="mini">全部展开</el-button>
             <el-button type="primary"  @click="toggleRowExpansion(false)" icon="el-icon-arrow-up" size="mini">全部收回</el-button>
@@ -432,6 +432,9 @@
         width: 100%;
         top: 0px;
         bottom: 0px;
-
+    }
+    .bottom {
+        margin: 5px;
+        bottom: 4px;
     }
 </style>

@@ -19,12 +19,12 @@
                 </el-col>
             </el-form>
         </el-row>
-        <el-row>
+        <el-row class="bottom">
             <el-button type="primary" @click="queryAll" icon="el-icon-search" size="mini">查询</el-button>
             <el-button type="primary" @click="add" icon="el-icon-plus"  size="mini">新增</el-button>
         </el-row>
-        <el-row  class="row-table">
-            <el-table :data="tableData" border style="width: 100%;" size="mini" class="table-1"
+        <el-row  class="row-table ">
+            <el-table :data="tableData" border style="width: 100%;" size="mini" class="table-1" v-loading="table_loading"
                       :default-sort="{prop:'createTime',order:'descending'}"
                       height="100%"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
@@ -108,6 +108,7 @@ export default {
     data(){
         return {
             searchListForm:{},
+            table_loading:false,
             addOrEditForm:{
                 roleId:'',
                 menuIds:[]
@@ -352,12 +353,14 @@ export default {
         },
         // 新增 按钮
         add(){
+            this.table_loading=true
             this.$set(this.addOrEditForm,'roleId','')
             this.$set(this.addOrEditForm,'name','')
             this.$set(this.addOrEditForm,'menuId',[])
             this.dialogTitle = '新增角色'
             //打开弹窗
             this.openAddOrEditDialog()
+            this.table_loading=false
             this.$nextTick(()=>{
                 this.resetForm('addOrEditForm')
             })
@@ -459,6 +462,8 @@ export default {
         width: 100%;
         top: 0px;
         bottom: 0px;
-
+    }
+    .bottom {
+        bottom: 5px;
     }
 </style>
