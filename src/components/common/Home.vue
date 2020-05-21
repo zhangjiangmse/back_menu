@@ -126,6 +126,8 @@
            },
            // 点击最上方的菜单栏时的响应,为aside添加新的菜单
            clickMainTab(tab){
+               // eslint-disable-next-line no-debugger
+               debugger
                let _this = this
                for(let i = 0 ;i <_this.mainMenuTabs.length;++i){
                    if(_this.mainMenuTabs[i].title == tab.name){

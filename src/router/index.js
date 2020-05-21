@@ -75,6 +75,16 @@ const routes = [
                 name:'MenuManage',
                 path:'/home/pages/menu-manage',
                 component:() => import('@/components/pages/system/MenuManage.vue')
+            },
+            {
+                name:'students',
+                path:'/home/pages/students',
+                component:() => import('@/components/pages/system/students.vue')
+            },
+            {
+                name:'studentInformation',
+                path:'/home/pages/studentInformation',
+                component:() => import('@/components/pages/system/studentInformation.vue')
             }
         ]
     },
