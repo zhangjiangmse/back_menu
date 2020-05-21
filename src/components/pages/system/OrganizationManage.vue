@@ -169,7 +169,7 @@
                             // 构造级联面板的选中参数
                             for(let i = 0 ;i < _this.menuOptions.length; ++i){
                                 // eslint-disable-next-line no-debugger
-                                // debugger
+                                 debugger
                                 let route = []
                                 let c1 = _this.menuOptions[i].children
                                 route.push(_this.menuOptions[i].id)
@@ -314,6 +314,8 @@
                             let data = response.data
                             if (data.flag == 1) {
                                //_this.orgOptions = data.result
+                                // eslint-disable-next-line no-debugger
+                                debugger
                                 _this.orgOptions.unshift({"id":0,"name":"全部分类",children:data.result})
                             } else {
                                 _this.$message.error(response.data.msg);

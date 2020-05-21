@@ -171,7 +171,7 @@
                 dialogFormVisible:false,
                 formLabelWidth:'150px',
                 menuOptions:[],
-                props: { value:"id",label:"text",checkStrictly: true },
+                props: { value:"id",label:"name",checkStrictly: true },
                 menuTypeOptions:[],
                 isShowOptions:[
                     {"value":1,"label":"是"},

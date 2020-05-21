@@ -141,7 +141,7 @@ export default {
             dialogFormVisible:false,
             formLabelWidth:'150px',
             menuOptions:[],
-            props: { multiple: true,value:"id",label:"text" },
+            props: { multiple: true,value:"id",label:"name" },
             dialogTitle:""
 
         }
@@ -191,24 +191,16 @@ export default {
 
             let _this = this
             let param = {"showTop":true}
-            let menuIdsArray = row.menuIds.split(",")
-            let menuId_index =menuIdsArray.length
 
             this.$axios.post("/menu/getAllMenuTree",param,{"baseURL":'csm-base-member'})
                 .then(function (response) {
                     let data = response.data
 
                     if(data.flag == 1){
-                        // eslint-disable-next-line no-debugger
-                        debugger
+
                         _this.menuOptions = data.result
-                        // 构造级联面板的选中参数
-                        let currRes = []
-                        let result = []
-                        _this.buildCascaderMultipleData(_this.menuOptions[0],menuIdsArray,currRes,result,{"index":menuId_index})
-                        // eslint-disable-next-line no-debugger
-                        debugger
-                        _this.$set(_this.addOrEditForm,'menuIds',result)
+
+                        _this.$set(_this.addOrEditForm,'menuIds',JSON.parse(row.menuIds))
                         _this.$set(_this.addOrEditForm,'roleId',row.id)
                         _this.$set(_this.addOrEditForm,'name',row.name)
                         _this.dialogTitle = '编辑角色'
@@ -395,23 +387,10 @@ export default {
         },
         // 构造保存角色参数
         buildSaveRoleParam(){
-            // eslint-disable-next-line no-debugger
-            debugger
+
             let roleId = this.addOrEditForm.roleId
-            let menuIds = ''
-            let cloneMenuIds = ''
-            this.addOrEditForm.menuIds.forEach((item)=>{
-                menuIds += item[item.length-1] + ","
-                item.forEach((item_children)=>{
-                    if(!cloneMenuIds.includes(item_children)){
-                        cloneMenuIds += item_children + ","
-                    }
-                })
-
-            })
-            menuIds = menuIds.substring(0,menuIds.length-1)
-            cloneMenuIds = cloneMenuIds.substring(0,cloneMenuIds.length-1)
-
+            let menuIds = JSON.stringify(this.addOrEditForm.menuIds)
+            let cloneMenuIds =  ''
             let param = {id:roleId,menuIds:menuIds,cloneMenuIds:cloneMenuIds,roleType:1,name:this.addOrEditForm.name}
             return param
         },
