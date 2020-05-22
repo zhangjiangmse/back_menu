@@ -6,23 +6,27 @@
         <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
             <el-tabs type="border-card" v-model="MainTabsValue['active-tab']" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;" @tab-click="clickMainTab">
                 <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.title"  :name="m_item.title">
-                    <el-container style="height: 100%;">
+                    <div v-if="isShowMainTab[m_item.title] == 'true'" style="height: 100%;" >
+                    <el-container style="height: 100%;" >
                         <Aside ref="aside" class="asideDiv" :aside_list="aside_list"></Aside>
                         <el-main>
                             <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
                                      @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
+
                                 <el-tab-pane
                                         v-for="(item) in editableTabs"
                                         :key="item.name"
                                         :label="item.title"
                                         :name="item.title" style="height: 100%;">
-                                    <div v-if="item.menuorigin == 'remote'" v-html="item.content" class="remoteTabDiv"></div>
-                                    <div v-else class="localTabDiv">
-                                        <keep-alive :include="keepAliveTagsList">
-                                            <router-view></router-view>
-                                        </keep-alive>
-                                    </div>
+
+                                        <div v-if="item.menuorigin == 'remote' && item['isShow'] == 'true'" v-html="item.content" class="remoteTabDiv"></div>
+                                        <div v-else class="localTabDiv">
+                                            <keep-alive :include="keepAliveTagsList">
+                                                <router-view v-if="item['isShow'] == 'true'"></router-view>
+                                            </keep-alive>
+                                        </div>
                                 </el-tab-pane>
+
                             </el-tabs>
                             <div v-show="contextMenuVisible">
                                 <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
@@ -35,6 +39,7 @@
                             </div>
                         </el-main>
                     </el-container>
+                    </div>
                 </el-tab-pane>
             </el-tabs>
         </el-main>
@@ -58,6 +63,7 @@
             return {
                 mainMenuTabs:[],
                 MainTabsValue:{"active-tab":''},
+                isShowMainTab:{},
                 aside_list:[],
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
@@ -105,7 +111,11 @@
                    this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
                        .then(function (response) {
                            if(response.data.flag == 1){
-                                _this.mainMenuTabs = response.data.result[0].children
+
+                               _this.mainMenuTabs = response.data.result[0].children
+                               _this.mainMenuTabs.forEach(item=>{
+                                   _this.$set(_this.isShowMainTab,item.title,"flase")
+                               })
                            }else{
                                _this.$message.error(response.data.msg);
                            }
@@ -126,11 +136,14 @@
            },
            // 点击最上方的菜单栏时的响应,为aside添加新的菜单
            clickMainTab(tab){
+               console.log(tab)
                let _this = this
                for(let i = 0 ;i <_this.mainMenuTabs.length;++i){
                    if(_this.mainMenuTabs[i].title == tab.name){
                        _this.aside_list = _this.mainMenuTabs[i].children
-                       break
+                       _this.$set(_this.isShowMainTab,_this.mainMenuTabs[i].title,"true")
+                   }else{
+                       _this.$set(_this.isShowMainTab,_this.mainMenuTabs[i].title,"false")
                    }
                }
                _this.bindRightClickMenu()
@@ -165,8 +178,7 @@
 
                //如果移除的是当前Tab页，则激活当前页的上页或下页
                if (this.editableTabsValue['active-tab'] === targetName) {
-                   // eslint-disable-next-line no-debugger
-                   debugger
+
                    let nextTab = this.editableTabs[targetIndex + 1] || this.editableTabs[targetIndex - 1];
                    if (nextTab) {
                        key = nextTab.key

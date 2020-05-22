@@ -37,7 +37,7 @@
         <el-row class="bottom">
             <el-button type="primary" @click="queryAll" icon="el-icon-search" size="mini">查询</el-button>
             <el-button type="primary" @click="add" icon="el-icon-plus" size="mini" >新增</el-button>
-            <el-button type="primary" @click="onSubmit" icon="el-icon-refresh" size="mini">同步呼叫中心用户</el-button>
+            <el-button type="primary" icon="el-icon-refresh" size="mini">同步呼叫中心用户</el-button>
         </el-row>
         <el-row class="row-table">
             <el-table :data="tableData" border class="table-1" size="mini"
