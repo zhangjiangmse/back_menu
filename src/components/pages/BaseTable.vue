@@ -14,6 +14,8 @@
                     </el-option>
                 </el-select>
             </el-col>
+        </el-row>
+        <el-row class="bottom">
             <el-col :xs="24" :sm="16" :md="16" :lg="18" :xl="18">
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="queryAll" >搜索</el-button>
                 <el-button type="primary" size="mini" icon="el-icon-edit" @click="add" >新增</el-button>
@@ -22,7 +24,7 @@
                 <el-button type="primary" size="mini" icon="el-icon-refresh" @click="cur_reload" >刷新</el-button>
             </el-col>
         </el-row>
-        <el-row class="el_row_table" style="top: 0px;bottom:100px;height: calc(100% - 140px);box-sizing: border-box">
+        <el-row class="row-table">
             <el-table :data="tableData" border style="width: 100%;top: 0px;bottom: 0px;height: 100%" size="mini"
                       :default-sort="{prop:'date',order:'descending'}"
                       height="100%" @selection-change="handleSelectionChange" @select="handleSelectRow"
@@ -502,5 +504,15 @@
         position: absolute;
         top: 0px;
         bottom: 0px;
+    }
+    .row-table{
+        top: 0px;
+        bottom:100px;
+        height: calc(100% - 160px);
+        box-sizing: border-box;
+    }
+    .bottom {
+        margin: 5px;
+        bottom: 4px;
     }
 </style>

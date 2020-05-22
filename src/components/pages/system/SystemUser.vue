@@ -526,7 +526,7 @@
     .row-table{
         top: 0px;
         bottom:100px;
-        height: calc(100% - 150px);
+        height: calc(100% - 160px);
         box-sizing: border-box;
     }
     .table-1{

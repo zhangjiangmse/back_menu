@@ -30,12 +30,11 @@
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
             >
-                <el-table-column fixed align="center"
+                <el-table-column align="center"
                                  type="index"
                                  width="40">
                 </el-table-column>
                 <el-table-column align="center"
-                        fixed
                         label="操作"
                         width="80">
                     <template slot-scope="scope">
@@ -428,7 +427,7 @@ export default {
     .row-table{
         top: 0px;
         bottom:100px;
-        height: calc(100% - 150px);
+        height: calc(100% - 160px);
         box-sizing: border-box;
     }
     .table-1{

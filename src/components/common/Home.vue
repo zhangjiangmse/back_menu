@@ -4,42 +4,35 @@
             <Header></Header>
         </el-header>
         <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
-            <el-tabs type="border-card" v-model="MainTabsValue['active-tab']" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;" @tab-click="clickMainTab">
-                <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.title"  :name="m_item.title">
-                    <div  style="height: 100%;" >
-                    <el-container style="height: 100%;" >
-                        <Aside ref="aside" class="asideDiv" :aside_list="aside_list"></Aside>
-                        <el-main>
-                            <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
-                                     @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
-                                <el-tab-pane
-                                        v-for="(item) in editableTabs"
-                                        :key="item.name"
-                                        :label="item.title"
-                                        :name="item.title" style="height: 100%;">
-
-                                        <div v-if="item.menuorigin == 'remote' && item['isShow'] == 'true'" v-html="item.content" class="remoteTabDiv"></div>
-                                        <div v-else class="localTabDiv">
-                                            <keep-alive :include="keepAliveTagsList">
-                                                <router-view v-if="item['isShow'] == 'true'"></router-view>
-                                            </keep-alive>
-                                        </div>
-                                </el-tab-pane>
-                            </el-tabs>
-                            <div v-show="contextMenuVisible">
-                                <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-                                    <li><el-button type="text" @click="curTabReload()" size="mini">重新加载</el-button></li>
-                                    <li><el-button type="text" @click="closeAllTabs()" size="mini">关闭所有</el-button></li>
-                                    <li><el-button type="text" @click="closeOtherTabs('left')" :disabled="isDisabledCloseLeftBtnFlag" size="mini">关闭左边</el-button></li>
-                                    <li><el-button type="text" @click="closeOtherTabs('right')" :disabled="isDisabledCloseRightBtnFlag" size="mini">关闭右边</el-button></li>
-                                    <li><el-button type="text" @click="closeOtherTabs('other')" size="mini">关闭其他</el-button></li>
-                                </ul>
-                            </div>
-                        </el-main>
-                    </el-container>
+            <el-container style="height: 100%;" >
+                <Aside ref="aside" class="asideDiv" ></Aside>
+                <el-main>
+                    <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
+                             @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
+                        <el-tab-pane
+                                v-for="(item) in editableTabs"
+                                :key="item.name"
+                                :label="item.title"
+                                :name="item.title" style="height: 100%;">
+                                <div v-if="item.menuorigin == 'remote' && item['isShow'] == 'true'" v-html="item.content" class="remoteTabDiv"></div>
+                                <div v-else class="localTabDiv">
+                                    <keep-alive :include="keepAliveTagsList">
+                                        <router-view v-if="item['isShow'] == 'true'"></router-view>
+                                    </keep-alive>
+                                </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                    <div v-show="contextMenuVisible">
+                        <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+                            <li><el-button type="text" @click="curTabReload()" size="mini">重新加载</el-button></li>
+                            <li><el-button type="text" @click="closeAllTabs()" size="mini">关闭所有</el-button></li>
+                            <li><el-button type="text" @click="closeOtherTabs('left')" :disabled="isDisabledCloseLeftBtnFlag" size="mini">关闭左边</el-button></li>
+                            <li><el-button type="text" @click="closeOtherTabs('right')" :disabled="isDisabledCloseRightBtnFlag" size="mini">关闭右边</el-button></li>
+                            <li><el-button type="text" @click="closeOtherTabs('other')" size="mini">关闭其他</el-button></li>
+                        </ul>
                     </div>
-                </el-tab-pane>
-            </el-tabs>
+                </el-main>
+            </el-container>
         </el-main>
     </el-container>
 </template>
@@ -59,10 +52,6 @@
         },
         data() {
             return {
-                mainMenuTabs:[],
-                MainTabsValue:{"active-tab":''},
-                isShowMainTab:{},
-                aside_list:[],
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
                 contextMenuVisible:false,
@@ -74,16 +63,9 @@
                 defaultActiveIndex:{"index":''},
             };
         },
-        created(){
-             this.initMainMenu()
-
+        mounted() {
+            this.bindRightClickMenu()
         },
-        // mounted() {
-
-        //     // 使用原生js 为单个dom绑定鼠标右击事件
-        //     let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-        //     tab_top_dom[1].oncontextmenu = this.openContextMenu
-        // },
         computed:{
             keepAliveTagsList(){
                 return this.$store.getters.keepAliveTagsList
@@ -96,56 +78,20 @@
                 } else {
                     document.body.removeEventListener("click", this.closeContextMenu);
                 }
-            }
+            },
         },
        methods: {
-            //初始化主要菜单
-           initMainMenu(){
-               let _this = this
-               //处理保存信息请求
 
-               if(_this.mainMenuTabs.length <= 1){
-
-                   this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
-                       .then(function (response) {
-                           if(response.data.flag == 1){
-
-                               _this.mainMenuTabs = response.data.result[0].children
-                               _this.mainMenuTabs.forEach(item=>{
-                                   _this.$set(_this.isShowMainTab,item.title,"flase")
-                               })
-                           }else{
-                               _this.$message.error(response.data.msg);
-                           }
-                       }).catch(function (error) {
-                       console.log(error);
-                   });
-               }
-
-           },
            bindRightClickMenu(){
 
                // 使用原生js 为单个dom绑定鼠标右击事件
-               let tab_top_dom = document.body.getElementsByClassName("el-tabs__header is-top")
-               for(let i = 1;i<tab_top_dom.length;++i){
+               let tab_top_dom = document.body.getElementsByClassName("el-tabs__nav-scroll")
+               for(let i = 0;i<tab_top_dom.length;++i){
                    tab_top_dom[i].oncontextmenu = this.openContextMenu
                }
 
            },
-           // 点击最上方的菜单栏时的响应,为aside添加新的菜单
-           clickMainTab(tab){
-               console.log(tab)
-               let _this = this
-               for(let i = 0 ;i <_this.mainMenuTabs.length;++i){
-                   if(_this.mainMenuTabs[i].title == tab.name){
-                       _this.aside_list = _this.mainMenuTabs[i].children
-                       _this.$set(_this.isShowMainTab,_this.mainMenuTabs[i].title,"true")
-                   }else{
-                       _this.$set(_this.isShowMainTab,_this.mainMenuTabs[i].title,"false")
-                   }
-               }
-               _this.bindRightClickMenu()
-           },
+
            reload(title) {
                console.log("刷新菜单")
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
@@ -212,17 +158,17 @@
             */
            clickTab(tab) {
                let _this = this
-
+               // eslint-disable-next-line no-debugger
+                debugger
                 //查找主Tab的名称
-                let childrenNode = _this.mainMenuTabs.concat()
+                let childrenNode = _this.$refs.aside.mainMenuOptions.concat()
                 let tempData = {"id": 0, title: '', children: childrenNode}
                 let array = []
                 let searchResult = {flag: false}
 
                 this.searchMainTabName(tempData, tab.name, array, searchResult)
                 //激活当前页所在的主Tab页
-                this.$set(_this.MainTabsValue, 'active-tab', array[1])
-                this.clickMainTab({name: array[1]})
+               _this.$refs.aside.handleChangeForMainMenu(array[1])
                 //选中当前页所在的左侧菜单栏的
                 let key = ''
                 let keyPath = ''
@@ -234,15 +180,7 @@
                         break;
                     }
                 }
-               // 查找当前的主菜单栏对应的左侧菜单栏
-                let asideIndex = 0
-                for(;asideIndex<_this.mainMenuTabs.length;++asideIndex){
-                    if(_this.mainMenuTabs[asideIndex].title == array[1]){
-                        break
-                    }
-                }
-                _this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,_this.mainMenuTabs[asideIndex].children);
-               // _this.$refs.aside[0].handleSelected(key, keyPath)
+               _this.$refs.aside.handleSelected(key, keyPath)
 
             },
            // 通过子节点找到祖宗节点
@@ -252,11 +190,11 @@
                     return
                 }
                 if(root.title == target){
-                    array.push(root.title)
+                    array.push(root.id)
                     this.$set(searchResult,'flag',true)
                     return;
                 }else{
-                    array.push(root.title)
+                    array.push(root.id)
                     let children = root.children
                     if(children!= undefined && children != null) {
                         children.forEach(item => {
@@ -315,36 +253,15 @@
                        break;
                    }
                }
-               let key = this.editableTabs[currTabIndex].key;
-               let keyPath = this.editableTabs[currTabIndex].keyPath
-
                let curTabName =  this.editableTabs[currTabIndex].name
                let new_tab_list_keepAlive = this.$store.getters.keepAliveTagsList
                new_tab_list_keepAlive = new_tab_list_keepAlive.filter((item)=>{
                    return item != curTabName
                })
                this.$store.commit('SET_KEEP_ALIVE', new_tab_list_keepAlive)
-
                this.$router.replace('/Home/pages/black')
-
                this.$nextTick(()=>{
-                   //查找主Tab的名称
-                   let childrenNode = this.mainMenuTabs.concat()
-                   let tempData = {"id": 0, title: '', children: childrenNode}
-                   let array = []
-                   let searchResult = {flag: false}
-
-                   this.searchMainTabName(tempData, this.editableTabs[currTabIndex].title, array, searchResult)
-
-                   // 查找当前的主菜单栏对应的左侧菜单栏
-                   let asideIndex = 0
-                   for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
-                       if(this.mainMenuTabs[asideIndex].title == array[1]){
-                           break
-                       }
-                   }
-                   this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
-
+                   this.clickTab({"name":this.editableTabs[currTabIndex].title})
                    this.$notify({
                        title: this.$t('message.tip'),
                        message: "刷新成功（如显示空白，请重试刷新！）",
@@ -354,7 +271,6 @@
            },
            // 关闭所有标签页
            closeAllTabs() {
-
                //删除所有tab标签
                this.editableTabs.splice(0,this.$my_tag_list.length)
                //调用子组件的方法，设置默认选中
@@ -371,11 +287,7 @@
                        break;
                    }
                }
-
-               let key = this.editableTabs[currTabIndex].key;
-               let keyPath = this.editableTabs[currTabIndex].keyPath
-               let curTab = this.editableTabs[currTabIndex]
-               console.log(currTabIndex)
+               let curTabTitle = this.editableTabs[currTabIndex].title
                if (par == "left") {
                    //删除左侧tab标签
                    this.editableTabs.splice(0,currTabIndex)
@@ -384,37 +296,20 @@
                }
                if (par == "right") {
                    //删除右侧tab标签
-                   this.editableTabs.splice(currTabIndex,this.editableTabs.length)
+                   this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
                    // this.$refs.aside[0].handleSelected(key,keyPath);
                }
                if (par == "other") {
                    //删除所有tab标签
-                   this.editableTabs.splice(0,this.editableTabs.length)
+                   this.editableTabs.splice(0,currTabIndex)
+                   this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
                    //调用子组件的方法，设置默认选中
                   // this.$refs.aside[0].handleSelected(key,keyPath);
                }
-
-               //调用子组件的方法，设置默认选中
-               //查找主Tab的名称
-               let childrenNode = this.mainMenuTabs.concat()
-               let tempData = {"id": 0, title: '', children: childrenNode}
-               let array = []
-               let searchResult = {flag: false}
-
-               this.searchMainTabName(tempData, curTab.title, array, searchResult)
-               //激活当前页所在的主Tab页
-               this.$set(this.MainTabsValue, 'active-tab', array[1])
-               this.clickMainTab({name: array[1]})
-
-               // 查找当前的主菜单栏对应的左侧菜单栏
-               let asideIndex = 0
-               for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
-                   if(this.mainMenuTabs[asideIndex].title == array[1]){
-                       break
-                   }
-               }
-               this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
+               // eslint-disable-next-line no-debugger
+                debugger
+               this.clickTab({"name":curTabTitle})
                this.closeContextMenu()
            },
            // 关闭contextMenu
@@ -463,7 +358,7 @@
         width: 99.4%;
     }
     .asideDiv{
-        max-height: 660px;
+        height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
     }

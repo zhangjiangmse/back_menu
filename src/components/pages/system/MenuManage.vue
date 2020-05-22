@@ -492,7 +492,7 @@
     .row-table{
         top: 0px;
         bottom:0px;
-        height: calc(100% - 70px);
+        height: calc(100% - 80px);
         box-sizing: border-box;
     }
     .table-1{

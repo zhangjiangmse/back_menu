@@ -5,6 +5,14 @@
              @open="handleOpen"
              @close="handleClose"
              :collapse="collapse" :unique-opened="true">
+        <el-select v-model="mainMenu" filterable clearable  placeholder="请选择菜单" size="mini" @change="handleChangeForMainMenu">
+            <el-option
+                    v-for="item in mainMenuOptions"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item.id">
+            </el-option>
+        </el-select>
         <template v-for="item in aside_list">
             <template v-if="item.children">
                 <el-submenu :index="item.index" :key="item.index">
@@ -50,13 +58,13 @@
     import bus from './bus';
 
     export default {
-        props:{
-            aside_list: Array,
-        },
         data() {
             return {
+                aside_list:[],
                 collapse: false,
                 default_active_index:{'active':''},
+                mainMenu:'',
+                mainMenuOptions: [],
                 // aside_list:[
                 //     {
                 //         index:'SystemHome',
@@ -218,6 +226,7 @@
         },
 
         created() {
+            this.initMenuOptions();
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
@@ -230,12 +239,35 @@
             }
         },
         methods: {
-            //home页传值选中左侧菜单
-            handleSelectedFromHome(key, keyPath,aside_list){
+            initMenuOptions(){
+                let _this = this
+                this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
+                    .then(function (response) {
+                        if(response.data.flag == 1){
+                            _this.mainMenuOptions = response.data.result[0].children
+                            //激活默认菜单
+                            _this.mainMenu = _this.mainMenuOptions[0].title
+                            _this.handleChangeForMainMenu(_this.mainMenuOptions[0].id)
 
-                this.aside_list = aside_list
-                this.handleSelected(key, keyPath,aside_list);
+                        }else{
+                            _this.$message.error(response.data.msg);
+                        }
+                    }).catch(function (error) {
+                    console.log(error);
+                });
             },
+            //切换子菜单
+            handleChangeForMainMenu(tag){
+                console.log(tag)
+                for(let i = 0;i<this.mainMenuOptions.length;++i){
+                    if(this.mainMenuOptions[i].id == tag){
+                        this.mainMenu = this.mainMenuOptions[i].id
+                        this.aside_list = this.mainMenuOptions[i].children
+                        break
+                    }
+                }
+            },
+
             //左侧菜单栏选中
             handleSelected: function (key, keyPath) {
 
