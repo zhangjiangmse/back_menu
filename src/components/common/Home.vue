@@ -93,7 +93,7 @@
            },
 
            reload(title) {
-               console.log("刷新菜单")
+
                //重新将store里的tabid设为当前页面，再使用curTabReload方法
                let currentContextTabId = title
                if(title == null ||title == ''){
@@ -158,8 +158,7 @@
             */
            clickTab(tab) {
                let _this = this
-               // eslint-disable-next-line no-debugger
-                debugger
+
                 //查找主Tab的名称
                 let childrenNode = _this.$refs.aside.mainMenuOptions.concat()
                 let tempData = {"id": 0, title: '', children: childrenNode}
@@ -307,8 +306,7 @@
                    //调用子组件的方法，设置默认选中
                   // this.$refs.aside[0].handleSelected(key,keyPath);
                }
-               // eslint-disable-next-line no-debugger
-                debugger
+
                this.clickTab({"name":curTabTitle})
                this.closeContextMenu()
            },

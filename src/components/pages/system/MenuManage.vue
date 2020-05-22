@@ -279,7 +279,7 @@
             },
             // 设置菜单是否显示
             handleIsShowMenu(row,isShowFlag){
-                console.log(row,isShowFlag)
+
                 let _this = this
                 let param = {"id":row.id,menuType:row.menuType,"isShow":isShowFlag}
                 this.$confirm('确定是否进行设置菜单的显示操作, 是否继续?', '提示', {

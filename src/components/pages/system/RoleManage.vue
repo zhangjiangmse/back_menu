@@ -168,7 +168,7 @@ export default {
             this.$axios.post("/role/querySysRoleList?currentPage="+this.currentPage+"&pageSize="+this.pageSize,param,{"baseURL":'csm-base-member'})
                 .then(function (response) {
                     let data = response.data
-                    console.log(data)
+
                     if(data.flag == 1){
                         let result = data.result
                         _this.tableData = result.records
@@ -239,7 +239,7 @@ export default {
         },
         // 设置默认角色
         handleIsDefaultRole(row){
-            console.log(row)
+
             let _this = this
             let param = {"id":row.id}
             this.$confirm('确定是否进行设置默认角色操作, 是否继续?', '提示', {

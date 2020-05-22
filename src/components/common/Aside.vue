@@ -2,8 +2,6 @@
     <el-menu :default-active="defaultActiveIndex['active']" collapse-transition
              class="el-menu-vertical-demo"
              @select="handleSelected"
-             @open="handleOpen"
-             @close="handleClose"
              :collapse="collapse" :unique-opened="true">
         <el-select v-model="mainMenu" filterable clearable  placeholder="请选择菜单" size="mini" @change="handleChangeForMainMenu">
             <el-option
@@ -258,7 +256,6 @@
             },
             //切换子菜单
             handleChangeForMainMenu(tag){
-                console.log(tag)
                 for(let i = 0;i<this.mainMenuOptions.length;++i){
                     if(this.mainMenuOptions[i].id == tag){
                         this.mainMenu = this.mainMenuOptions[i].id
@@ -301,13 +298,6 @@
                     }
                 }
                 this.addTab(tabNode);
-            },
-            handleOpen(key, keyPath) {
-
-                console.log("打开：" + key, keyPath);
-            },
-            handleClose(key, keyPath) {
-                console.log("关闭：" + key, keyPath);
             },
             addTab(tabNode) {
                 //修改缓存信息
