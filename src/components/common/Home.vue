@@ -6,13 +6,12 @@
         <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
             <el-tabs type="border-card" v-model="MainTabsValue['active-tab']" style="width: 99.8%;position: absolute;top: 0px;bottom: 0px;" @tab-click="clickMainTab">
                 <el-tab-pane v-for="m_item in mainMenuTabs" :key="m_item.id" :label="m_item.title"  :name="m_item.title">
-                    <div v-if="isShowMainTab[m_item.title] == 'true'" style="height: 100%;" >
+                    <div  style="height: 100%;" >
                     <el-container style="height: 100%;" >
                         <Aside ref="aside" class="asideDiv" :aside_list="aside_list"></Aside>
                         <el-main>
                             <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
                                      @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
-
                                 <el-tab-pane
                                         v-for="(item) in editableTabs"
                                         :key="item.name"
@@ -26,7 +25,6 @@
                                             </keep-alive>
                                         </div>
                                 </el-tab-pane>
-
                             </el-tabs>
                             <div v-show="contextMenuVisible">
                                 <ul :style="{left:left+'px',top:top+'px'}" class="contextmenu">
@@ -243,7 +241,8 @@
                         break
                     }
                 }
-               _this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,_this.mainMenuTabs[asideIndex].children);
+                _this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,_this.mainMenuTabs[asideIndex].children);
+               // _this.$refs.aside[0].handleSelected(key, keyPath)
 
             },
            // 通过子节点找到祖宗节点
