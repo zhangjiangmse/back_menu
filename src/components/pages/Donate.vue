@@ -17,10 +17,9 @@
             <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6">
                 <div style="min-height: 36px;"></div>
             </el-col>
-            <div class="border">
-                11111111
-            </div>
         </el-row>
+<!--        <iframe src="icon.vue" width="1200" height="300" frameborder="0" scrolling="auto" style="position:absolute;top: -300px;left: 0px;"></iframe>-->
+
     </div>
 </template>
 
@@ -39,8 +38,5 @@ export default {
 <style>
     #app {
         height: 3000px;
-    }
-    .border {
-        border: 1px solid cadetblue;
     }
 </style>
