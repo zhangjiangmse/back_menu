@@ -109,49 +109,30 @@
              */
             removeTab(targetName) {
 
-               let targetIndex = -1;
-               for(let i = 0;i<this.editableTabs.length;++i){
-                   if (this.editableTabs[i].title == targetName) {
-                       // 记录移除标签的index
-                       targetIndex = i;
+               // 记录移除标签的index
+               let targetIndex = 0;
+               for(;targetIndex<this.editableTabs.length;++targetIndex){
+                   if (this.editableTabs[targetIndex].title == targetName) {
                        break;
                    }
                }
-               let key = this.editableTabs[targetIndex].key
-               let keyPath = this.editableTabs[targetIndex].keyPath
-
                //如果移除的是当前Tab页，则激活当前页的上页或下页
                if (this.editableTabsValue['active-tab'] === targetName) {
 
                    let nextTab = this.editableTabs[targetIndex + 1] || this.editableTabs[targetIndex - 1];
-                   if (nextTab) {
-                       key = nextTab.key
-                       keyPath = nextTab.keyPath
-                   }else{
+                   if (nextTab) { //当前页并非最后一个tab页
+                       //删除目标页
                        this.editableTabs.splice(targetIndex,1)
-                       return
+                       //调用子组件的方法，激活下一页
+                       this.clickTab({"name":nextTab.title})
+                   }else{ //当前页是最后一个tab页
+                       //只需要 删除目标页
+                       this.editableTabs.splice(targetIndex,1)
                    }
-                   //调用子组件的方法，设置默认选中
-                   //查找主Tab的名称
-                   let childrenNode = this.mainMenuTabs.concat()
-                   let tempData = {"id": 0, title: '', children: childrenNode}
-                   let array = []
-                   let searchResult = {flag: false}
-
-                   this.searchMainTabName(tempData, nextTab.title, array, searchResult)
-
-                   // 查找当前的主菜单栏对应的左侧菜单栏
-                   let asideIndex = 0
-                   for(;asideIndex<this.mainMenuTabs.length;++asideIndex){
-                       if(this.mainMenuTabs[asideIndex].title == array[1]){
-                           break
-                       }
-                   }
-
-                   this.$refs.aside[asideIndex].handleSelectedFromHome(key, keyPath,this.mainMenuTabs[asideIndex].children);
-                   // this.$refs.aside[0].handleSelected(key,keyPath);
+               }else{
+                   ///如果移除的不是当前Tab页，只需要 删除目标页
+                   this.editableTabs.splice(targetIndex,1)
                }
-               this.editableTabs.splice(targetIndex,1)
             },
            /*
            点击当前页
