@@ -40,7 +40,7 @@
             <el-button type="primary" icon="el-icon-refresh" size="mini">同步呼叫中心用户</el-button>
         </el-row>
         <el-row class="row-table">
-            <el-table :data="tableData" border class="table-1" size="mini"
+            <el-table :data="tableData" border class="table-1" size="mini" v-loading="table_loading"
                       :default-sort="{prop:'createTime',order:'descending'}" height="100%"
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
@@ -123,7 +123,7 @@
                     </el-form-item>
                     <el-form-item label="所在部门：" :label-width="formLabelWidth" prop="orgId">
                         <el-cascader ref="orgCascader" v-model="addOrEditForm.parentOrg" :style="{width:this.addDialogInputWidth}" :show-all-levels="false"
-                                     :options="orgOptions"
+                                     :options="orgOptions"  @change="handleSelectedChange"
                                      :props="props"
                                      clearable></el-cascader>
                     </el-form-item>
@@ -195,7 +195,7 @@
                     ],
                     pwd:[
                         { required: true, message: '请输入密码', trigger: 'blur' },
-                        { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                        { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
                     ],
                     realName:[
                         { required: true, message: '请输入姓名', trigger: 'blur' },
@@ -219,6 +219,7 @@
                     {"prop":"createTime","label":"创建时间","width":"120","fixed":false}
                 ],
                 tableData:[],
+                table_loading:false,
                 currentPage:1,
                 pageSize:10,
                 totalData:0,
@@ -256,8 +257,8 @@
             },
             //数据查询请求
             queryData(){
-
                 let _this = this
+                _this.table_loading = true
                 let param = this.searchListForm
                 this.$axios.post("/user/querySysUserList?currentPage="+this.currentPage+"&pageSize="+this.pageSize,param,{"baseURL":'csm-base-member'})
                     .then(function (response) {
@@ -266,6 +267,7 @@
                             let result = data.result
                             _this.tableData = result.records
                             _this.totalData = result.total
+                            _this.table_loading = false
                         }else{
                             _this.$message.error(response.data.msg);
                         }
@@ -288,10 +290,11 @@
                         _this.buildSingleSeletedCasecaderVal(_this.orgOptions[0],row.orgId,parentOrg,searchFlag)
 
                         _this.addOrEditForm = {
-                            "accountId":row.accountId,"name":row.name,"pwd":row.password,"realName":row.realName,"wechatid":row.wechatid,
+                            "accountId":row.id,"userId":row.userid,"name":row.name,"pwd":"abcdefg","realName":row.realName,"wechatid":row.wechatid,
                             "tel":row.tel,"email":row.email,"roleId":row.roleId,"parentOrg":parentOrg,
                             "istelAccount":row.istelAccount,"isonlineAccount":row.isonlineAccount
                         }
+
                         _this.openAddOrEditDialog()
                         _this.table_loading = false
                     })
@@ -336,7 +339,6 @@
             confirm(){
 
                 this.saveUserInfo()
-
                 this.dialogFormVisible = false
             },
             // 删除数据
@@ -418,6 +420,7 @@
             add(){
                 let _this = this
                 _this.table_loading = true
+                _this.$set(_this.isShowObj,"isShowPwd",true)
                 let promises=[_this.queryRoleListForSelect(),_this.getOrganizationTree()]
                 return Promise.all(promises)
                     .then(()=>{
@@ -430,6 +433,7 @@
             //弹窗内 --->保存按钮
             saveUserInfo(){
                 let _this = this
+                console.log(_this.addOrEditForm)
                 this.$refs.addOrEditForm.validate((valid) => {
                     if (valid) {
                         //处理保存信息请求
@@ -438,7 +442,7 @@
                             .then(function (response) {
                                 if(response.data.flag == 1){
                                     _this.$message.success("保存成功");
-                                    this.queryAll()
+                                    _this.queryData()
                                 }else{
                                     _this.$message.error(response.data.msg);
                                 }
@@ -454,7 +458,8 @@
             },
             // 构造保存参数
             buildSaveRoleParam(){
-
+                // eslint-disable-next-line no-debugger
+                debugger
                 let param = Object.assign({},this.addOrEditForm)
                 this.$set(param,"orgId",this.addOrEditForm.parentOrg[this.addOrEditForm.parentOrg.length-1])
                 return param
@@ -491,6 +496,11 @@
             resetForm(formName){
                 this.$refs[formName].resetFields();
             },
+            // 新增/编辑组织机构弹窗内 ->级联面板选中改变时
+            handleSelectedChange() {
+                //单选，选中任意节点后，关闭下拉框
+                this.$refs.orgCascader.toggleDropDownVisible(false)
+            },
             //分页
             handleSizeChange(pageSize){
                 this.pageSize = pageSize
@@ -513,7 +523,7 @@
         word-break: break-all;
     }
     .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     .singlePage{
         width: 99.5%;
