@@ -287,26 +287,24 @@
                    }
                }
                let curTabTitle = this.editableTabs[currTabIndex].title
-               if (par == "left") {
-                   //删除左侧tab标签
-                   this.editableTabs.splice(0,currTabIndex)
-                   //调用子组件的方法，设置默认选中
-                   // this.$refs.aside[0].handleSelected(key,keyPath);
+               switch(par){
+                   case "left":{
+                       //删除左侧tab标签
+                       this.editableTabs.splice(0,currTabIndex)
+                       break;
+                   }
+                   case "right":{
+                       //删除右侧tab标签
+                       this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
+                       break;
+                   }
+                   case "other":{
+                       //删除其他所有tab标签
+                       this.editableTabs.splice(0,currTabIndex)
+                       this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
+                       break;
+                   }
                }
-               if (par == "right") {
-                   //删除右侧tab标签
-                   this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
-                   //调用子组件的方法，设置默认选中
-                   // this.$refs.aside[0].handleSelected(key,keyPath);
-               }
-               if (par == "other") {
-                   //删除所有tab标签
-                   this.editableTabs.splice(0,currTabIndex)
-                   this.editableTabs.splice(currTabIndex+1,this.editableTabs.length)
-                   //调用子组件的方法，设置默认选中
-                  // this.$refs.aside[0].handleSelected(key,keyPath);
-               }
-
                this.clickTab({"name":curTabTitle})
                this.closeContextMenu()
            },
