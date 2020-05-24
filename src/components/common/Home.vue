@@ -65,15 +65,7 @@
                 defaultActiveIndex:{"index":''},
             };
         },
-        created(){
-            // eslint-disable-next-line no-debugger
-            debugger
-
-            console.log(this.editableTabsValue,this.editableTabs)
-            console.log(this.$my_editableTabsValue,this.$my_tag_list)
-        },
         mounted() {
-
             this.bindRightClickMenu()
         },
         computed:{
