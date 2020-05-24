@@ -56,13 +56,16 @@
     import bus from './bus';
 
     export default {
+        props:{
+            mainMenuOptions:Array
+        },
         data() {
             return {
                 aside_list:[],
                 collapse: false,
                 default_active_index:{'active':''},
                 mainMenu:'',
-                mainMenuOptions: [],
+                //mainMenuOptions: [],
                 // aside_list:[
                 //     {
                 //         index:'SystemHome',
@@ -224,7 +227,6 @@
         },
 
         created() {
-            this.initMenuOptions();
             // 通过 Event Bus 进行组件间通信，来折叠侧边栏
             bus.$on('collapse', msg => {
                 this.collapse = msg;
@@ -237,29 +239,16 @@
             }
         },
         methods: {
-            initMenuOptions(){
-                let _this = this
-                this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
-                    .then(function (response) {
-                        if(response.data.flag == 1){
-                            _this.mainMenuOptions = response.data.result[0].children
-                            //激活默认菜单
-                            _this.mainMenu = _this.mainMenuOptions[0].title
-                            _this.handleChangeForMainMenu(_this.mainMenuOptions[0].id)
 
-                        }else{
-                            _this.$message.error(response.data.msg);
-                        }
-                    }).catch(function (error) {
-                    console.log(error);
-                });
-            },
             //切换子菜单
-            handleChangeForMainMenu(tag){
-                for(let i = 0;i<this.mainMenuOptions.length;++i){
-                    if(this.mainMenuOptions[i].id == tag){
-                        this.mainMenu = this.mainMenuOptions[i].id
-                        this.aside_list = this.mainMenuOptions[i].children
+            handleChangeForMainMenu(tag,mainMenuOptions){
+                if(mainMenuOptions == undefined){
+                    mainMenuOptions = this.mainMenuOptions
+                }
+                for(let i = 0;i<mainMenuOptions.length;++i){
+                    if(mainMenuOptions[i].id == tag){
+                        this.mainMenu = mainMenuOptions[i].id
+                        this.aside_list = mainMenuOptions[i].children
                         break
                     }
                 }

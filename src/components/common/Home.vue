@@ -1,11 +1,11 @@
 <template>
-    <el-container>
+    <el-container >
         <el-header style="background-color: #2c3e50;height: 60px;padding:0">
             <Header></Header>
         </el-header>
-        <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;">
+        <el-main style="position: absolute;top: 60px;bottom: 0px;width: 100%;" v-loading="mainLoading">
             <el-container style="height: 100%;" >
-                <Aside ref="aside" class="asideDiv" ></Aside>
+                <Aside ref="aside" class="asideDiv" :mainMenuOptions="mainMenuOptions"></Aside>
                 <el-main>
                     <el-tabs id="innerTab" v-model="editableTabsValue['active-tab']" type="card" closable
                              @tab-remove="removeTab" @tab-click="clickTab" style="width: 99.8%;height: 100%;overflow-y: hidden">
@@ -52,6 +52,8 @@
         },
         data() {
             return {
+                mainLoading:false,
+                mainMenuOptions:[],
                 editableTabsValue:this.$my_editableTabsValue,
                 editableTabs:this.$my_tag_list,
                 contextMenuVisible:false,
@@ -63,7 +65,15 @@
                 defaultActiveIndex:{"index":''},
             };
         },
+        created(){
+            // eslint-disable-next-line no-debugger
+            debugger
+
+            console.log(this.editableTabsValue,this.editableTabs)
+            console.log(this.$my_editableTabsValue,this.$my_tag_list)
+        },
         mounted() {
+
             this.bindRightClickMenu()
         },
         computed:{
@@ -80,8 +90,33 @@
                 }
             },
         },
-       methods: {
+        beforeRouteEnter (to, from, next) {
+            //路由进入之前，获取数据
+            next(vm => {
+                vm.mainLoading = true
+                vm.initMenuOptions()
+            })
+        },
 
+       methods: {
+           async initMenuOptions(){
+               let _this = this
+               await this.$axios.post("/menu/getAllMenuTreeDetailByRoleId",null,{"baseURL":'csm-base-member'})
+                   .then(function (response) {
+                       if(response.data.flag == 1){
+
+                           _this.mainMenuOptions = response.data.result[0].children
+                           //激活默认菜单
+                           _this.mainMenu = _this.mainMenuOptions[0].title
+                           _this.$refs.aside.handleChangeForMainMenu(_this.mainMenuOptions[0].id,_this.mainMenuOptions)
+                           _this.mainLoading = false
+                       }else{
+                           _this.$message.error(response.data.msg);
+                       }
+                   }).catch(function (error) {
+                   console.log(error);
+               });
+           },
            bindRightClickMenu(){
 
                // 使用原生js 为单个dom绑定鼠标右击事件

@@ -97,7 +97,16 @@
             //初始化公司列表
             this.myInitCompanyList();
         },
+        beforeRouteLeave (to, from, next) {
+            // 重置tab页列表，否则重新登陆会保留上一次激活的tab
+            if(from.path == '/login'){
+                this.$my_tag_list.length = 0
+                this.$set(this.$my_editableTabsValue,"active-tab",'')
+            }
+            next()
+        },
         methods:{
+
             myInitStyle(){
                 let height = window.innerHeight
                 if(height <= 650){
