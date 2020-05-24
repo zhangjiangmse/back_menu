@@ -364,7 +364,9 @@ export default {
                         .then(function (response) {
                             if(response.data.flag == 1){
                                 _this.$message.success("保存成功");
-                                _this.resetForm('addOrEditForm')
+                                if(_this.dialogTitle == '新增角色'){
+                                    _this.resetForm('addOrEditForm')
+                                }
                                 _this.queryAll()
                             }else{
                                 _this.$message.error(response.data.msg);
