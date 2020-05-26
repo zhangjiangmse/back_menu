@@ -1,7 +1,7 @@
 <template>
     <div class="singlePage">
         <el-row>
-            <el-form :inline="true" :model="searchListForm" class="demo-form-inline" size="mini">
+            <el-form :inline="true" :model="searchListForm" class="demo-form-inline" size="mini" id="searchListForm">
                 <el-col :xs="8" :sm="4" :md="3" :lg="3" :xl="3">
                     <el-form-item>
                         <el-input v-model="searchListForm.accountName" placeholder="请输入账号" clearable></el-input>
@@ -45,7 +45,7 @@
                       :header-cell-style="{background:'#eef1f6',color:'#606266'}"
 
             >
-                <el-table-column fixed align="center"
+                <el-table-column align="center"
                                  type="index"
                                  width="40">
                 </el-table-column>
@@ -161,7 +161,6 @@
 </template>
 
 <script>
-
 
     export default {
         name: "SystemUser",
@@ -458,8 +457,6 @@
             },
             // 构造保存参数
             buildSaveRoleParam(){
-                // eslint-disable-next-line no-debugger
-                debugger
                 let param = Object.assign({},this.addOrEditForm)
                 this.$set(param,"orgId",this.addOrEditForm.parentOrg[this.addOrEditForm.parentOrg.length-1])
                 return param
@@ -521,6 +518,9 @@
         color: #606266;
         font-size: 14px;
         word-break: break-all;
+    }
+    #searchListForm .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+        margin-bottom: 10px;
     }
     .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
         margin-bottom: 15px;

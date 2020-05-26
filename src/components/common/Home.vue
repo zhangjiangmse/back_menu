@@ -100,7 +100,7 @@
                            _this.mainMenuOptions = response.data.result[0].children
                            //激活默认菜单
                            _this.mainMenu = _this.mainMenuOptions[0].title
-                           _this.$refs.aside.handleChangeForMainMenu(_this.mainMenuOptions[0].id,_this.mainMenuOptions)
+                          // _this.$refs.aside.handleChangeForMainMenu(_this.mainMenuOptions[0].id,_this.mainMenuOptions)
                            _this.mainLoading = false
                        }else{
                            _this.$message.error(response.data.msg);
@@ -174,8 +174,9 @@
                 let searchResult = {flag: false}
 
                 this.searchMainTabName(tempData, tab.name, array, searchResult)
+
                 //激活当前页所在的主Tab页
-               _this.$refs.aside.handleChangeForMainMenu(array[1])
+               _this.$refs.aside.mainHandleSelected(array[1].index,[array[1].index])
                 //选中当前页所在的左侧菜单栏的
                 let key = ''
                 let keyPath = ''
@@ -187,6 +188,7 @@
                         break;
                     }
                 }
+
                _this.$refs.aside.handleSelected(key, keyPath)
 
             },
@@ -197,11 +199,11 @@
                     return
                 }
                 if(root.title == target){
-                    array.push(root.id)
+                    array.push(root)
                     this.$set(searchResult,'flag',true)
                     return;
                 }else{
-                    array.push(root.id)
+                    array.push(root)
                     let children = root.children
                     if(children!= undefined && children != null) {
                         children.forEach(item => {
@@ -348,7 +350,6 @@
         padding: 0px 22px;
 
     }
-
     .contextmenu li:hover {
         background: #f2f2f2;
         cursor: pointer;
@@ -362,6 +363,7 @@
         width: 99.4%;
     }
     .asideDiv{
+        background-color:#223142;
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
@@ -372,7 +374,6 @@
         padding-top: 5px;
         padding-left: 10px;
         overflow-y: auto;
-
     }
     .el-tabs__item {
         padding: 0 20px;

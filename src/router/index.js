@@ -72,6 +72,16 @@ const routes = [
                 component:() => import('@/components/pages/system/OrganizationManage.vue')
             },
             {
+                name:'UserDictionary',
+                path:'/home/pages/user-dictionary',
+                component:() => import('@/components/pages/system/UserDictionary.vue')
+            },
+            {
+                name:'SystemDictionary',
+                path:'/home/pages/system-dictionary',
+                component:() => import('@/components/pages/system/SystemDictionary.vue')
+            },
+            {
                 name:'MenuManage',
                 path:'/home/pages/menu-manage',
                 component:() => import('@/components/pages/system/MenuManage.vue')
@@ -92,6 +102,11 @@ const routes = [
         name:'Login',
         path:'/login',
         component:() => import('@/components/pages/Login.vue'),
+    },
+    {
+        name:'chatting',
+        path:'/chatting',
+        component:() => import('@/components/pages/chatting.vue'),
     },
 
 

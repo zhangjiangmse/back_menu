@@ -1,12 +1,5 @@
 <template>
     <el-row>
-        <!-- 折叠按钮 -->
-        <el-col :xs="1" :sm="2" :md="2" :lg="1" :xl="1">
-            <div class="collapse-btn" @click="collapseChage">
-                <i v-if="!collapse" class="el-icon-s-fold"></i>
-                <i v-else class="el-icon-s-unfold"></i>
-            </div>
-        </el-col>
         <el-col :xs="2" :sm="4" :md="4" :lg="2" :xl="2" class="hidden-xs-only">
             <div class="logo">后台管理系统</div>
         </el-col>
@@ -172,14 +165,6 @@ export default {
     height: 70px;
     font-size: 22px;
     color: #fff;
-}
-.collapse-btn {
-    color: #ffffff;
-    font-size: 20px;
-    float: left;
-    padding: 0 21px;
-    cursor: pointer;
-    line-height: 60px;
 }
 div .logo {
     color: #ffffff;

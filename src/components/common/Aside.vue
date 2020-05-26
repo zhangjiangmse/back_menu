@@ -1,55 +1,78 @@
 <template>
-    <el-menu :default-active="defaultActiveIndex['active']" collapse-transition
-             class="el-menu-vertical-demo"
-             @select="handleSelected"
-             :collapse="collapse" :unique-opened="true">
-        <el-select v-model="mainMenu" filterable clearable  placeholder="请选择菜单" size="mini" @change="handleChangeForMainMenu">
-            <el-option
-                    v-for="item in mainMenuOptions"
-                    :key="item.id"
-                    :label="item.title"
-                    :value="item.id">
-            </el-option>
-        </el-select>
-        <template v-for="item in aside_list">
-            <template v-if="item.children">
-                <el-submenu :index="item.index" :key="item.index">
-                    <template slot="title">
+    <div style="flex-direction: row;display: flex">
+        <div style="flex: 1">
+            <el-menu :default-active="defaultActiveIndex['active']" collapse-transition  background-color="#223142" text-color="#fff"
+                     class="el-menu-vertical-demo" style="border: 0;"
+                     @select="mainHandleSelected"
+                     :collapse="mainCollapse" :unique-opened="true">
+                <!-- 折叠按钮 -->
+                <el-row style="text-align: center;background-color:#1B2735;height: 40px">
+                    <el-button class="collapse-btn" @click="collapseChangeForMain" type="text">
+                        <i v-if="!mainCollapse" class="el-icon-s-fold"></i>
+                        <i v-else class="el-icon-s-unfold"></i>
+                    </el-button>
+                </el-row>
+                <template v-for="item in mainMenuOptions">
+                    <el-menu-item :index="item.index" :key="item.index">
                         <i :class="item.icon"></i>
-                        <span slot="title">{{ item.title }}</span>
-                    </template>
-                    <template v-for="subItem in item.children">
-                        <el-submenu
-                                v-if="subItem.children"
-                                :index="subItem.index"
-                                :key="subItem.index"
-                        >
+                        <span slot="title">{{item.title}}</span>
+                    </el-menu-item>
+                </template>
+            </el-menu>
+        </div>
+        <div style="flex: 1">
+            <el-menu :default-active="defaultActiveIndex['active']" collapse-transition  background-color="#394655" text-color="#fff"
+                     class="el-menu-vertical-demo"
+                     @select="handleSelected"
+                     :unique-opened="true" v-if="collapse">
+                <!-- 折叠按钮 -->
+                <el-row style="text-align: center;padding: 0px;height: 40px">
+                    <el-button class="collapse-btn-level2" @click="collapseChangeForLeve2" type="text">
+                        <label style="font-size: 16px">{{MainTitle}}</label>
+                        <i class="el-icon-d-arrow-left" style="margin-left: 40px"></i>
+                    </el-button>
+                </el-row>
+                <template v-for="item in aside_list">
+                    <template v-if="item.children">
+                        <el-submenu :index="item.index" :key="item.index">
                             <template slot="title">
-                                <i :class="subItem.icon"></i>
-                                <span slot="title">{{ subItem.title }}</span>
+                                <i :class="item.icon"></i>
+                                <span slot="title">{{ item.title }}</span>
                             </template>
-                            <el-menu-item
-                                    v-for="(threeItem,i) in subItem.children"
-                                    :key="i"
-                                    :index="threeItem.index"
-                            ><i :class="subItem.icon"></i><span>{{ threeItem.title }}</span></el-menu-item>
+                            <template v-for="subItem in item.children">
+                                <el-submenu
+                                        v-if="subItem.children"
+                                        :index="subItem.index"
+                                        :key="subItem.index"
+                                >
+                                    <template slot="title">
+                                        <i :class="subItem.icon"></i>
+                                        <span slot="title">{{ subItem.title }}</span>
+                                    </template>
+                                    <el-menu-item
+                                            v-for="(threeItem,i) in subItem.children"
+                                            :key="i"
+                                            :index="threeItem.index"
+                                    ><i :class="subItem.icon"></i><span>{{ threeItem.title }}</span></el-menu-item>
+                                </el-submenu>
+                                <el-menu-item
+                                        v-else
+                                        :index="subItem.index"
+                                        :key="subItem.index"
+                                ><i :class="subItem.icon"></i><span>{{ subItem.title }}</span></el-menu-item>
+                            </template>
                         </el-submenu>
-                        <el-menu-item
-                                v-else
-                                :index="subItem.index"
-                                :key="subItem.index"
-                        ><i :class="subItem.icon"></i><span>{{ subItem.title }}</span></el-menu-item>
                     </template>
-                </el-submenu>
-            </template>
-            <template v-else>
-                <el-menu-item :index="item.index" :key="item.index">
-                    <i :class="item.icon"></i>
-                    <span slot="title">{{ item.title }}</span>
-                </el-menu-item>
-            </template>
-        </template>
-    </el-menu>
+                    <template v-else>
+                        <el-menu-item :index="item.index" :key="item.index">
+                            <i :class="item.icon"></i>
+                            <span slot="title">{{ item.title }}</span>
+                        </el-menu-item>
+                    </template>
+                </template>
+            </el-menu>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -61,6 +84,8 @@
         },
         data() {
             return {
+                MainTitle:'',
+                mainCollapse:false,
                 aside_list:[],
                 collapse: false,
                 default_active_index:{'active':''},
@@ -239,21 +264,21 @@
             }
         },
         methods: {
-
             //切换子菜单
-            handleChangeForMainMenu(tag,mainMenuOptions){
+            mainHandleSelected :function(key, keyPath,node,mainMenuOptions){
+
                 if(mainMenuOptions == undefined){
                     mainMenuOptions = this.mainMenuOptions
                 }
                 for(let i = 0;i<mainMenuOptions.length;++i){
-                    if(mainMenuOptions[i].id == tag){
-                        this.mainMenu = mainMenuOptions[i].id
+                    if(mainMenuOptions[i].index == key){
                         this.aside_list = mainMenuOptions[i].children
+                        this.MainTitle = mainMenuOptions[i].title
                         break
                     }
                 }
+                this.collapse = true
             },
-
             //左侧菜单栏选中
             handleSelected: function (key, keyPath) {
 
@@ -335,17 +360,18 @@
                     keyPath:tabNode.keyPath,
                     isShow:"true",
                 });
-                // 设置当前tab下只有一个content存在
-                // this.$my_tag_list.forEach(item=>{
-                //     if(item.title == tabNode.title){
-                //         item.isShow = "true"
-                //     }else{
-                //         item.isShow = "false"
-                //     }
-                // })
 
                 this.$set(this.$my_editableTabsValue,"active-tab",tabNode.title)
             },
+            // 一级菜单 伸缩
+            collapseChangeForMain(){
+                this.mainCollapse = !this.mainCollapse
+            },
+            // 二级菜单 伸缩
+            collapseChangeForLeve2(){
+                this.collapse = !this.collapse
+            }
+
         }
     }
 </script>
@@ -353,9 +379,24 @@
     /**
     保证收缩时，可以平滑过渡，而非直接到达，参见官网的例子
      */
-    .el-menu-vertical-demo:not(.el-menu--collapse) {
-        width: 200px;
-        min-height: 400px;
+     .el-menu-vertical-demo:not(.el-menu--collapse) {
+        width: 150px;
+        height: 100%;
+        min-height: 600px;
+    }
+    .collapse-btn {
+        color: #fff;
+        font-size: 30px;
+        padding: 0 0px;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+    .collapse-btn-level2{
+        color: #fff;
+        font-size: 15px;
+        padding: 0 0px;
+        cursor: pointer;
+        margin-top: 5px;
     }
     .iconfont {
         vertical-align: middle;

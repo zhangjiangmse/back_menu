@@ -12,10 +12,15 @@ axios.defaults.timeout = 20000;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // 设置后台的访问地址
 const url = {
-    'csm-base':'http://10.0.0.2:8006/base',
-    'csm-base-member':'http://10.0.0.2:8006/member/base',
+    'csm-base':'http://localhost:8006/base',
+    'csm-base-member':'http://localhost:8006/member/base',
     'csm-auth':'http://192.168.99.130/csm-auth/auth'
 };
+// const url = {
+//     'csm-base':'http://192.168.99.133/base',
+//     'csm-base-member':'http://192.168.99.133/member/base',
+//     'csm-auth':'http://192.168.99.133/csm-auth/auth'
+// };
 
 //添加请求拦截器
 axios.interceptors.request.use(config =>{

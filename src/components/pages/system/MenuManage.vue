@@ -142,7 +142,7 @@
                 addOrEditFormRules:{
                     name: [
                         { required: true, message: '请输入名称', trigger: 'blur' },
-                        { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+                        { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
                     ],
                     code:[
                         { required: true, message: '请输入编码', trigger: 'blur' },
@@ -325,14 +325,14 @@
             // 删除数据
             deleteData(selected){
                 let _this = this
-                let param = {"ids":selected}
+                let param = {"menuIds":selected}
                 this.$confirm('确定是否进行删除操作, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning',
                     center: true
                 }).then(() => {
-                    this.$axios.post("/role/deleteSysRole",param,{"baseURL":'csm-base-member'})
+                    this.$axios.post("/menu/deleteMenuById",param,{"baseURL":'csm-base-member'})
                         .then(function (response) {
                             let data = response.data
                             if(data.flag == 1){
@@ -435,6 +435,7 @@
                                     _this.addOrEditForm = Object.assign({},newObj)
                                     _this.$set(_this.addOrEditForm, 'name', '')
                                     _this.$set(_this.addOrEditForm, 'menuType', _this.menuTypeOptions[0].value)
+                                    _this.getMenuOptionsPost()
                                     _this.queryAll()
                                 }else{
                                     _this.$message.error(response.data.msg);
